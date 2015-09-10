@@ -92,3 +92,38 @@ To compile:
 > g++ -o Example06 Example06.cc PulseChiSqSNNLS.cc -std=c++11 `root-config --cflags --glibs`
 To run
 > ./Example06 
+
+
+
+Example07.multifit
+------------------
+
+Multifit reconstruction
+One need to make sure that Eigen is installed
+New tests
+To compile:
+
+    g++ -o Example07.multifit.exe Example07.multifit.cc PulseChiSqSNNLS.cc -std=c++11 `root-config --cflags --glibs`
+
+To run
+
+    ./Example07.multifit.exe 
+
+    
+    r99t -q CreateData.C
+    
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_eta_0.0_pu_140.root\"\)
+     
+    ./Example07.multifit.exe mysample.root
+    
+
+25ns
+
+   Mean of REC-MC = -0.00319768 GeV
+   RMS of REC-MC = 0.0268833 GeV
+        
+12ns
+
+   Mean of REC-MC = -0.00182634 GeV
+   RMS of REC-MC = 0.026504 GeV
+    

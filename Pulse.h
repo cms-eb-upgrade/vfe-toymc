@@ -1,33 +1,14 @@
-#include <TRandom.h>
 #include <TMath.h>
 #include <TFile.h>
 #include <TTree.h>
 #include <TGraph.h>
 
-TRandom rnd;
 
-// total number of bunches in "LHC" bunch train
-const int NBXTOTAL = 2800;
+#include "PulseParameters.h"
 
-// length of a waveform in 1ns steps
-const int WFLENGTH  = 500;
 
-// number of samples per hit
-const int NSAMPLES   = 10;
-
-// distance between samples in 1ns steps
-const int NFREQ      = 25;
-
-// position of a 1st sample inside waveform
-const int IDSTART    = 180;
-
-// CRRC shaping time in ns. It is used to calculate noise
-// correlations. For QIE, set it to 1e-1
-const double TAU = 43.0;
-
-// filename with pulse shape
-const TString FNAMESHAPE       = "data/EmptyFileCRRC43.root";
-
+// #include <TRandom.h>
+// TRandom rnd;
 
 
 class Pulse{
@@ -131,6 +112,4 @@ void Pulse::NoiseInit()
     for( int col=row+1; col<NSAMPLES; col++ ) mL_[row][col] = 0;
   }
 }
-
-
 

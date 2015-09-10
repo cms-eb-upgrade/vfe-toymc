@@ -21,7 +21,12 @@
 
 
 
-void CreateData() {
+#include <TRandom.h>
+
+
+void CreateData(std::string nameInputFile = "data/waveform_signal_10GeV_pu_0.root") {
+
+ TRandom rnd;
  
  Pulse pSh;
  
@@ -33,7 +38,7 @@ void CreateData() {
  
  // input Waveforms
  
- TFile *file = new TFile("data/waveform_signal_10GeV_pu_0.root");
+ TFile *file = new TFile(nameInputFile.c_str());
  int    BX0;
  int    nWF;
  double waveform[WFLENGTH];
@@ -61,6 +66,9 @@ void CreateData() {
  treeOut->Branch("samples",           samples,              "samples[nSmpl]/D");
  
  int nentries = tree->GetEntries();
+ 
+ std::cout << " nentries = " << nentries << std::endl;
+ 
  for(int ievt=0; ievt<nentries; ievt++){
   
   double samplesUncorrelated[NSAMPLES];

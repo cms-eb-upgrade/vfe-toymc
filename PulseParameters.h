@@ -11,12 +11,12 @@ const int NBXTOTAL = 2800;
 const int WFLENGTH  = 500;
 
 // number of samples per hit
-// const int NSAMPLES   = 10;
-const int NSAMPLES   = 20;
+const int NSAMPLES   = 10;
+// const int NSAMPLES   = 20;
 
 // distance between samples in 1ns steps
-// const int NFREQ      = 25;
-const int NFREQ      = 12;
+const int NFREQ      = 25;
+// const int NFREQ      = 12;
 
 // position of a 1st sample inside waveform
 const int IDSTART    = 180;

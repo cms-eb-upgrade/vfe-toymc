@@ -28,6 +28,7 @@ data/EmptyFileCRRC60.root    CRRC tau=60 ns
 data/EmptyFileCRRC90.root    CRRC tau=90 ns
 data/EmptyFileQIE25.root    Charge integration with gate 25 ns
 data/EmptyFileQIE12.root    Charge integration with gate 12 ns
+data/EmptyFileQIE6.root     Charge integration with gate 6 ns
 
 
 
@@ -80,7 +81,7 @@ Example05
 Fit one event with a pulse shape and plot it
 Compare reconstructed amplitude with MC truth.
 Timing is also reconstructed.
-Errors on amplitude and timing are estimated.
+Errors on amplitude and timing are estimated using RMS of histograms
 
 
 Example06
@@ -92,3 +93,11 @@ To compile:
 > g++ -o Example06 Example06.cc PulseChiSqSNNLS.cc -std=c++11 `root-config --cflags --glibs`
 To run
 > ./Example06 
+
+
+Example07
+---------
+
+Same exercise as in Example05 except errors on amplitude and timing are estimated using effective sigma: shortest interval that covers 68%. The advantages of this approach:
+- no need to use histograms
+- works for non-Gaussian distributions

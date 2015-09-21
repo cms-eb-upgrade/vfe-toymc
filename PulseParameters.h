@@ -11,10 +11,12 @@ const int NBXTOTAL = 2800;
 const int WFLENGTH  = 500;
 
 // number of samples per hit
+//   a.k.a how many samples we get from one crystal
 const int NSAMPLES   = 10;
 // const int NSAMPLES   = 20;
 
 // distance between samples in 1ns steps
+//   a.k.a. ~1/sampling rate in ns   
 const int NFREQ      = 25;
 // const int NFREQ      = 12;
 

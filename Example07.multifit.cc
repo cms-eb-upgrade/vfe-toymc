@@ -27,10 +27,11 @@ TFile *fout;
 TH1D *h01;
 
 std::vector<TH1F*> v_pulses;
+std::vector<TH1F*> v_amplitudes_reco;
 
-//---- transform the pulse into an histogram
-TH1F* CreateHistoShape( SampleVector& sam, int itime) {
- TString name = Form ("h_%d",itime);
+//---- transform the pulse into an histogram              - type is "reco = 1" or "sim = 0"
+TH1F* CreateHistoShape( SampleVector& sam, int itime, int type) {
+ TString name = Form ("h_%d_%d",type, itime);
  TH1F* temphist = new TH1F(name.Data(),"",sam.rows(),0,sam.rows());
  
  for (int i=0; i<sam.rows(); i++) {
@@ -39,6 +40,22 @@ TH1F* CreateHistoShape( SampleVector& sam, int itime) {
  
  return temphist;
 }
+
+
+//---- transform the pulse into an histogram              - type is "reco = 1" or "sim = 0"
+TH1F* CreateHistoAmplitudes( const PulseVector& sam, int itime, int type) {
+ TString name = Form ("hAmpl_%d_%d",type, itime);
+ TH1F* temphist = new TH1F(name.Data(),"",sam.rows(),0,sam.rows());
+ 
+ for (int i=0; i<sam.rows(); i++) {
+  temphist->SetBinContent(i+1, sam[i]);
+ }
+ 
+ return temphist;
+}
+
+
+
 
 
 //---- initialize histograms results
@@ -113,13 +130,15 @@ void run(std::string inputFile) {
  std::cout << " nentries = " << nentries << std::endl;
  std::cout << " NSAMPLES = " << NSAMPLES << std::endl;
  
+ v_amplitudes_reco.clear();
+ 
  for(int ievt=0; ievt<nentries; ++ievt){
   tree->GetEntry(ievt);
   for(int i=0; i<NSAMPLES; i++){
    amplitudes[i] = samples[i];
   }
   
-  v_pulses.push_back(CreateHistoShape(amplitudes, ievt));
+  v_pulses.push_back(CreateHistoShape(amplitudes, ievt, 0));
   
   double pedval = 0.;
   double pedrms = 1.0;
@@ -142,6 +161,15 @@ void run(std::string inputFile) {
   double aMax = status ? pulsefunc.X()[ipulseintime] : 0.;
   //  double aErr = status ? pulsefunc.Errors()[ipulseintime] : 0.;
   
+  
+//   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
+//    amplitudes[ipulse] = pulsefunc.X()[ipulse];
+//   }
+  
+//   v_pulses_reco.push_back(CreateHistoShape(amplitudes, ievt, 1));
+
+  v_amplitudes_reco.push_back(CreateHistoAmplitudes(pulsefunc.X(), ievt, 1));  
+  
   h01->Fill(aMax - amplitudeTruth);
  }
  
@@ -152,6 +180,14 @@ void run(std::string inputFile) {
  fout->cd("samples"); 
  for (int ievt = 0; ievt < v_pulses.size(); ievt++) {
   v_pulses.at(ievt)->Write();
+ }
+ 
+//  for (int ievt = 0; ievt < v_pulses_reco.size(); ievt++) {
+//   v_pulses_reco.at(ievt)->Write();
+//  }
+
+ for (int ievt = 0; ievt < v_amplitudes_reco.size(); ievt++) {
+  v_amplitudes_reco.at(ievt)->Write();
  }
  
  std::cout << "  Mean of REC-MC = " << h01->GetMean() << " GeV" << std::endl;

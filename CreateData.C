@@ -42,7 +42,7 @@ void CreateData(std::string nameInputFile = "data/waveform_signal_10GeV_pu_0.roo
  int    BX0;
  int    nWF;
  double waveform[WFLENGTH];
- double energyPU[NBXTOTAL];
+ double energyPU[NBXTOTAL]; //---- along a complete LHC circle
  double signalTruth;
  TTree *tree = (TTree*)file->Get("Waveforms");
  tree->SetBranchAddress("nWF",          &nWF);

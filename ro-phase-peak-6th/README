@@ -1,0 +1,12 @@
+One need to choose a readout phase for each pulse.
+Current ECAL tries to use a readout phase that places peak of the pulse at the 6th sample (out of 10)
+
+Lets use similar approach to determine the readout phase for each pulse shape at three different samplings with 40 MHz, 80 MHz and 160 MHz. Lets call this approach "6th-12th-24th" which means that peak of the pulse is at
+- 6th sample for 10 samples in the readout with 25ns steps
+- 12th sample for 20 samples in the readout with 12ns steps
+- 24th sample for 40 samples in the readout with 6ns steps
+
+
+However, the are reasons to believe that for PU mitigation it is beneficial to adjust readout phase to provide more information about BX before in-time BX (BX0). One can study other scenarios like 
+- "7th-14th-28th"
+- "8th-16th-32th"

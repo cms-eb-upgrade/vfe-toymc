@@ -76,7 +76,7 @@ void init() {
   //  for(int i=0; i<(NSAMPLES+2); i++) pulseShapeTemplate[i] /= pulseShapeTemplate[2];
   for (int i=0; i<(NSAMPLES+2); ++i) fullpulse(i+7) = pulseShapeTemplate[i];
 
-  
+  //---- correlation
   for (int i=0; i<NSAMPLES; ++i) {
     for (int j=0; j<NSAMPLES; ++j) {
       int vidx = std::abs(j-i);
@@ -103,6 +103,8 @@ void init() {
   
   
   //---- whatever the sampling, it is always 10!
+  //----   if you sample more, soem BX will be empty
+  //----   otherwise all BX will be active ones
   activeBX.resize(10);
   for (unsigned int ibx=0; ibx<10; ++ibx) {
     activeBX.coeffRef(ibx) = activeBXs[ibx];
@@ -129,6 +131,15 @@ void run(std::string inputFile) {
  
  std::cout << " nentries = " << nentries << std::endl;
  std::cout << " NSAMPLES = " << NSAMPLES << std::endl;
+ fout->cd();
+ TTree* newtree = (TTree*) tree->Clone("RecoAndSim");
+ //---- whatever the sampling, it is always 10!
+ //----   if you sample more, soem BX will be empty
+ //----   otherwise all BX will be active ones
+ double samplesReco[10];
+ int ipulseintime;
+ newtree->Branch("samplesReco",   samplesReco,   "samplesReco[10]/D");
+ newtree->Branch("ipulseintime",  ipulseintime,  "ipulseintime/I");
  
  v_amplitudes_reco.clear();
  
@@ -148,7 +159,7 @@ void run(std::string inputFile) {
   bool status = pulsefunc.DoFit( amplitudes, noisecor, pedrms, activeBX, fullpulse, fullpulsecov );
   double chisq = pulsefunc.ChiSq();
   
-  unsigned int ipulseintime = 0;
+  ipulseintime = 0;
   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
    if (pulsefunc.BXs().coeff(ipulse)==0) {
     ipulseintime = ipulse;
@@ -160,6 +171,18 @@ void run(std::string inputFile) {
   
   double aMax = status ? pulsefunc.X()[ipulseintime] : 0.;
   //  double aErr = status ? pulsefunc.Errors()[ipulseintime] : 0.;
+  
+  for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
+   if (status) {
+    samplesReco[ipulse] = pulsefunc.X()[ipulse];
+   }
+   else {
+    samplesReco[ipulse] = -1;
+   }
+  }
+  
+  
+  
   
   
 //   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
@@ -192,7 +215,13 @@ void run(std::string inputFile) {
  
  std::cout << "  Mean of REC-MC = " << h01->GetMean() << " GeV" << std::endl;
  std::cout << "   RMS of REC-MC = " << h01->GetRMS()  << " GeV" << std::endl;
+ 
+ 
+ fout->cd();
+ newtree->Write();
+ 
 }
+
 
 void saveHist() {
   fout->cd();

@@ -113,6 +113,7 @@ To run
     r99t -q CreateData.C
     
     r99t -q CreateData.C\(\"data/waveform_signal_10GeV_eta_0.0_pu_140.root\"\)
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root \"\)
      
     ./Example07.multifit.exe mysample.root
     

@@ -14,7 +14,7 @@
 #include "TProfile.h"
 #include "TH2.h"
 #include "TFile.h"
- 
+
 
 //---- transform the pulse into an histogram              - type is "reco = 1" or "sim = 0"
 TH1F* CreateHistoShape( SampleVector& sam, int itime, int type) {
@@ -44,8 +44,8 @@ TH1F* CreateHistoAmplitudes( const PulseVector& sam, int itime, int type) {
 
 
 
-void run(std::string inputFile) {
-
+void run(std::string inputFile, std::string outFile) {
+ 
  Pulse pSh;
  
  FullSampleVector fullpulse(FullSampleVector::Zero());
@@ -101,10 +101,10 @@ void run(std::string inputFile) {
  std::cout << " end init " << std::endl;
  //  activeBX.resize(1);
  //  activeBX.coeffRef(0) = 0;
-
-
-
  
+ 
+ 
+ std::cout << " inputFile = " << inputFile << std::endl;
  TFile *file2 = new TFile(inputFile.c_str());
  //  TFile *file2 = new TFile("data/samples_signal_10GeV_eta_0.0_pu_140.root");
  
@@ -124,7 +124,8 @@ void run(std::string inputFile) {
  std::vector<TH1F*> v_pulses;
  std::vector<TH1F*> v_amplitudes_reco;
  
- fout = new TFile("output.root","recreate");
+ std::cout << " outFile = " << outFile << std::endl;
+ fout = new TFile(outFile.c_str(),"recreate");
  h01 = new TH1D("h01", "dA", 1000, -5.0, 5.0);
  
  TTree* newtree = (TTree*) tree->CloneTree(0); //("RecoAndSim");
@@ -133,7 +134,7 @@ void run(std::string inputFile) {
  //----   if you sample more, some BX will be empty
  //----   otherwise all BX will be active ones
  double samplesReco[10];
- int ipulseintime;
+ int ipulseintime = 0;
  newtree->Branch("samplesReco",   samplesReco,   "samplesReco[10]/D");
  newtree->Branch("ipulseintime",  ipulseintime,  "ipulseintime/I");
  
@@ -176,9 +177,9 @@ void run(std::string inputFile) {
    if (status) {
     std::cout << " ip = " << ipulse << " --> " << int(pulsefunc.BXs().coeff(ipulse)) << " ----> " << pulsefunc.X()[ ipulse ] << std::endl;
     samplesReco[ int(pulsefunc.BXs().coeff(ipulse)) + 5] = pulsefunc.X()[ ipulse ];
-//     samplesReco[ int(pulsefunc.BXs().coeff(ipulse)) + 5] = pulsefunc.X()[ int(pulsefunc.BXs().coeff(ipulse)) + 5 ];
-//     samplesReco[ipulse] = pulsefunc.X()[ ipulse ];
-//     samplesReco[ipulse] = pulsefunc.X()[ pulsefunc.BXs().coeff(ipulse) ];
+    //     samplesReco[ int(pulsefunc.BXs().coeff(ipulse)) + 5] = pulsefunc.X()[ int(pulsefunc.BXs().coeff(ipulse)) + 5 ];
+    //     samplesReco[ipulse] = pulsefunc.X()[ ipulse ];
+    //     samplesReco[ipulse] = pulsefunc.X()[ pulsefunc.BXs().coeff(ipulse) ];
    }
    else {
     samplesReco[ipulse] = -1;
@@ -187,16 +188,16 @@ void run(std::string inputFile) {
   
   
   
-//   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
-//    amplitudes[ipulse] = pulsefunc.X()[ipulse];
-//   }
+  //   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
+  //    amplitudes[ipulse] = pulsefunc.X()[ipulse];
+  //   }
   
-//   v_pulses_reco.push_back(CreateHistoShape(amplitudes, ievt, 1));
-
+  //   v_pulses_reco.push_back(CreateHistoShape(amplitudes, ievt, 1));
+  
   v_amplitudes_reco.push_back(CreateHistoAmplitudes(pulsefunc.X(), ievt, 1));  
   
   h01->Fill(aMax - amplitudeTruth);
- 
+  
   newtree->Fill();
   
  }
@@ -210,10 +211,10 @@ void run(std::string inputFile) {
   v_pulses.at(ievt)->Write();
  }
  
-//  for (int ievt = 0; ievt < v_pulses_reco.size(); ievt++) {
-//   v_pulses_reco.at(ievt)->Write();
-//  }
-
+ //  for (int ievt = 0; ievt < v_pulses_reco.size(); ievt++) {
+ //   v_pulses_reco.at(ievt)->Write();
+ //  }
+ 
  for (int ievt = 0; ievt < v_amplitudes_reco.size(); ievt++) {
   v_amplitudes_reco.at(ievt)->Write();
  }
@@ -243,8 +244,14 @@ int main(int argc, char** argv) {
   inputFile = argv[1];
  }
  
- run(inputFile);
-
+ std::string outFile = "output.root";
+ if (argc>=3) {
+  outFile = argv[2];
+ }
+ std::cout << " outFile = " << outFile << std::endl;
+ 
+ run(inputFile, outFile);
+ 
  return 0;
 }
 

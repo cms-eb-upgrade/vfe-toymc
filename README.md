@@ -122,6 +122,34 @@ To run
 
     
     
+    
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",25\)
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",-25\)
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",-50\)
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",-75\)
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",-100\)
+    r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",-125\)
+    
+    ./Example07.multifit.exe mysample_0.root    output.0.root
+    ./Example07.multifit.exe mysample_25.root   output.25.root
+    ./Example07.multifit.exe mysample_-25.root  output.-25.root
+    ./Example07.multifit.exe mysample_-50.root  output.-50.root
+    ./Example07.multifit.exe mysample_-75.root  output.-75.root
+    ./Example07.multifit.exe mysample_-100.root  output.-100.root
+    ./Example07.multifit.exe mysample_-125.root  output.-125.root
+    
+    r99t plot/plot.C\(\"output.0.root\"\)
+    r99t plot/plot.C\(\"output.25.root\"\)
+    r99t plot/plot.C\(\"output.-25.root\"\)
+    r99t plot/plot.C\(\"output.-50.root\"\)
+    r99t plot/plot.C\(\"output.-75.root\"\)
+    r99t plot/plot.C\(\"output.-100.root\"\)
+    r99t plot/plot.C\(\"output.-125.root\"\)
+
+    hadd output_all.root output.*.root
+    r99t plot/plot.C\(\"output_all.root\"\)
+
+    
 25ns
 
    Mean of REC-MC = -0.00319768 GeV

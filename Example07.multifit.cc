@@ -15,19 +15,6 @@
 #include "TH2.h"
 #include "TFile.h"
  
-Pulse pSh;
-
-FullSampleVector fullpulse(FullSampleVector::Zero());
-FullSampleMatrix fullpulsecov(FullSampleMatrix::Zero());
-SampleMatrix noisecor(SampleMatrix::Zero());
-BXVector activeBX;
-SampleVector amplitudes(SampleVector::Zero());
-
-TFile *fout;
-TH1D *h01;
-
-std::vector<TH1F*> v_pulses;
-std::vector<TH1F*> v_amplitudes_reco;
 
 //---- transform the pulse into an histogram              - type is "reco = 1" or "sim = 0"
 TH1F* CreateHistoShape( SampleVector& sam, int itime, int type) {
@@ -57,84 +44,93 @@ TH1F* CreateHistoAmplitudes( const PulseVector& sam, int itime, int type) {
 
 
 
-
-//---- initialize histograms results
-void initHist() {
-  fout = new TFile("output.root","recreate");
-  h01 = new TH1D("h01", "dA", 1000, -5.0, 5.0);
-}
-
-void init() {
-  initHist();
-
-  // intime sample is [2]
-  double pulseShapeTemplate[NSAMPLES+2];
-  for(int i=0; i<(NSAMPLES+2); i++){
-    double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2);
-    pulseShapeTemplate[i] = pSh.fShape(x);
-  }
-  //  for(int i=0; i<(NSAMPLES+2); i++) pulseShapeTemplate[i] /= pulseShapeTemplate[2];
-  for (int i=0; i<(NSAMPLES+2); ++i) fullpulse(i+7) = pulseShapeTemplate[i];
-
-  //---- correlation
-  for (int i=0; i<NSAMPLES; ++i) {
-    for (int j=0; j<NSAMPLES; ++j) {
-      int vidx = std::abs(j-i);
-      noisecor(i,j) = pSh.corr(vidx);
-    }
-  }
-
-  
-  
-//   int activeBXs[] = { -5, -4, -3, -2, -1,  0,  1,  2,  3,  4 };
-  int activeBXs[100];
-  if (NSAMPLES == 10) {
-   for (unsigned int ibx=0; ibx<NSAMPLES; ++ibx) {
-    activeBXs[ibx] = ibx - NSAMPLES/2;
-    std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
-   }
-  }
-  else {
-   for (unsigned int ibx=0; ibx<10; ++ibx) {
-    activeBXs[ibx] = 2*ibx - NSAMPLES/2;
-    std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
-   }
-  }
-  
-  
-  //---- whatever the sampling, it is always 10!
-  //----   if you sample more, soem BX will be empty
-  //----   otherwise all BX will be active ones
-  activeBX.resize(10);
-  for (unsigned int ibx=0; ibx<10; ++ibx) {
-    activeBX.coeffRef(ibx) = activeBXs[ibx];
-  } 
-  
-  std::cout << " end init " << std::endl;
-  //  activeBX.resize(1);
-  //  activeBX.coeffRef(0) = 0;
-}
-
-
-
 void run(std::string inputFile) {
+
+ Pulse pSh;
+ 
+ FullSampleVector fullpulse(FullSampleVector::Zero());
+ FullSampleMatrix fullpulsecov(FullSampleMatrix::Zero());
+ SampleMatrix noisecor(SampleMatrix::Zero());
+ BXVector activeBX;
+ SampleVector amplitudes(SampleVector::Zero());
+ 
+ 
+ // intime sample is [2]
+ double pulseShapeTemplate[NSAMPLES+2];
+ for(int i=0; i<(NSAMPLES+2); i++){
+  double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2);
+  pulseShapeTemplate[i] = pSh.fShape(x);
+ }
+ //  for(int i=0; i<(NSAMPLES+2); i++) pulseShapeTemplate[i] /= pulseShapeTemplate[2];
+ for (int i=0; i<(NSAMPLES+2); ++i) fullpulse(i+7) = pulseShapeTemplate[i];
+ 
+ //---- correlation
+ for (int i=0; i<NSAMPLES; ++i) {
+  for (int j=0; j<NSAMPLES; ++j) {
+   int vidx = std::abs(j-i);
+   noisecor(i,j) = pSh.corr(vidx);
+  }
+ }
+ 
+ 
+ 
+ //   int activeBXs[] = { -5, -4, -3, -2, -1,  0,  1,  2,  3,  4 };
+ int activeBXs[100];
+ if (NSAMPLES == 10) {
+  for (unsigned int ibx=0; ibx<NSAMPLES; ++ibx) {
+   activeBXs[ibx] = ibx - NSAMPLES/2;
+   std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
+  }
+ }
+ else {
+  for (unsigned int ibx=0; ibx<10; ++ibx) {
+   activeBXs[ibx] = 2*ibx - NSAMPLES/2;
+   std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
+  }
+ }
+ 
+ 
+ //---- whatever the sampling, it is always 10!
+ //----   if you sample more, soem BX will be empty
+ //----   otherwise all BX will be active ones
+ activeBX.resize(10);
+ for (unsigned int ibx=0; ibx<10; ++ibx) {
+  activeBX.coeffRef(ibx) = activeBXs[ibx];
+ } 
+ 
+ std::cout << " end init " << std::endl;
+ //  activeBX.resize(1);
+ //  activeBX.coeffRef(0) = 0;
+
+
+
  
  TFile *file2 = new TFile(inputFile.c_str());
  //  TFile *file2 = new TFile("data/samples_signal_10GeV_eta_0.0_pu_140.root");
  
  double samples[NSAMPLES];
  double amplitudeTruth;
- TTree *tree = (TTree*)file2->Get("Samples");
+ TTree *tree = (TTree*) file2->Get("Samples");
  tree->SetBranchAddress("amplitudeTruth",      &amplitudeTruth);
  tree->SetBranchAddress("samples",             samples);
  int nentries = tree->GetEntries();
  
  std::cout << " nentries = " << nentries << std::endl;
  std::cout << " NSAMPLES = " << NSAMPLES << std::endl;
- fout->cd();
- TTree* newtree = (TTree*) tree->Clone("RecoAndSim");
+ 
+ TFile *fout;
+ TH1D *h01;
+ 
+ std::vector<TH1F*> v_pulses;
+ std::vector<TH1F*> v_amplitudes_reco;
+ 
+ fout = new TFile("output.root","recreate");
+ h01 = new TH1D("h01", "dA", 1000, -5.0, 5.0);
+ 
+ TTree* newtree = (TTree*) tree->CloneTree(0); //("RecoAndSim");
+ newtree->SetName("RecoAndSim");
  //---- whatever the sampling, it is always 10!
- //----   if you sample more, soem BX will be empty
+ //----   if you sample more, some BX will be empty
  //----   otherwise all BX will be active ones
  double samplesReco[10];
  int ipulseintime;
@@ -162,6 +158,7 @@ void run(std::string inputFile) {
   ipulseintime = 0;
   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
    if (pulsefunc.BXs().coeff(ipulse)==0) {
+    std::cout << " found intime!!! --> " << ipulse << std::endl;
     ipulseintime = ipulse;
     break;
    }
@@ -172,16 +169,21 @@ void run(std::string inputFile) {
   double aMax = status ? pulsefunc.X()[ipulseintime] : 0.;
   //  double aErr = status ? pulsefunc.Errors()[ipulseintime] : 0.;
   
+  std::cout << " pulsefunc.BXs().rows() = " << pulsefunc.BXs().rows() << std::endl;
+  std::cout << " pulsefunc.X() = " <<  pulsefunc.X() << std::endl;
+  
   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs().rows(); ++ipulse) {
    if (status) {
-    samplesReco[ipulse] = pulsefunc.X()[ipulse];
+    std::cout << " ip = " << ipulse << " --> " << int(pulsefunc.BXs().coeff(ipulse)) << " ----> " << pulsefunc.X()[ ipulse ] << std::endl;
+    samplesReco[ int(pulsefunc.BXs().coeff(ipulse)) + 5] = pulsefunc.X()[ ipulse ];
+//     samplesReco[ int(pulsefunc.BXs().coeff(ipulse)) + 5] = pulsefunc.X()[ int(pulsefunc.BXs().coeff(ipulse)) + 5 ];
+//     samplesReco[ipulse] = pulsefunc.X()[ ipulse ];
+//     samplesReco[ipulse] = pulsefunc.X()[ pulsefunc.BXs().coeff(ipulse) ];
    }
    else {
     samplesReco[ipulse] = -1;
    }
   }
-  
-  
   
   
   
@@ -194,6 +196,9 @@ void run(std::string inputFile) {
   v_amplitudes_reco.push_back(CreateHistoAmplitudes(pulsefunc.X(), ievt, 1));  
   
   h01->Fill(aMax - amplitudeTruth);
+ 
+  newtree->Fill();
+  
  }
  
  
@@ -218,16 +223,14 @@ void run(std::string inputFile) {
  
  
  fout->cd();
- newtree->Write();
+ newtree->AutoSave();
+ h01->Write();
+ fout->Close();
  
 }
 
 
-void saveHist() {
-  fout->cd();
-  h01->Write();
-  fout->Close();
-}
+
 
 
 
@@ -240,9 +243,8 @@ int main(int argc, char** argv) {
   inputFile = argv[1];
  }
  
- init();
  run(inputFile);
- saveHist();
+
  return 0;
 }
 

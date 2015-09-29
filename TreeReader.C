@@ -5,7 +5,6 @@
 #include "Pulse.h"
 
 void TreeReader(const char* file = "output.root") {
-
   double waveform[WFLENGTH];
 
   TFile* fin  = new TFile(file, "read");
@@ -17,7 +16,7 @@ void TreeReader(const char* file = "output.root") {
   for (int e = 0; e < events; e++) {
     // Create a new hist for the current event
     TH1D* wavehist = new TH1D("Event_" + TString::Itoa(e, 10), 
-                              "Waveform with pileup; Time; Amplitude",
+                              "Waveform with pileup; Time (ns); Amplitude (GeV)",
                               WFLENGTH, 0, WFLENGTH);
     tree->GetEntry(e);
     // Fill the histogram across the whole time range

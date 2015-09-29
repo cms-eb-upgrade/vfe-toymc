@@ -45,6 +45,9 @@ void Example02()
   TFile *file = new TFile(fileInput.Data());
   TH1D *pupdf = (TH1D*)file->Get(hname);
   pupdf->SetDirectory(0);
+  TH1D* puEpdf = new TH1D("Pileup Energy pdf", 
+                          "Pileup Energy; Energy (GeV); Frequency",
+                          100, 0, 1);
   
   // Get the Pulse Shape
   Pulse pSh;
@@ -61,6 +64,7 @@ void Example02()
   int    nWF    = WFLENGTH;
   double waveform[WFLENGTH];
   double signalTruth;
+  double puEnergy;
   
   tree->Branch("BX0",         &BX0,         "BX0/I");
   tree->Branch("nBX",         &nBX,         "nBX/I");
@@ -80,7 +84,9 @@ void Example02()
 		   // total energy per BX
 	  	energyPU[ibx] = 0.;
 	  	for (int imb = 0; imb < nMinBias[ibx]; imb++) {
-	  		energyPU[ibx] += pow(10., pupdf->GetRandom());
+        puEnergy = pow(10., pupdf->GetRandom());
+	  		energyPU[ibx] += puEnergy;
+        puEpdf->Fill(puEnergy, 1.0);
   		}
 
 	  // pick in-time BX
@@ -94,7 +100,7 @@ void Example02()
 
 	  // add pileup to the waveform
 	  // time window is nWF ns wide and is centered at BX0
-	  int ibxMax = !(BX0+11<nBX )?(BX0+11):nBX;
+	  int ibxMax = min(BX0+11, nBX);
 	  for (int ibx = 0; ibx < ibxMax; ibx++) {
 		  for (int iwf = 0; iwf < nWF; iwf++) {
 			  double t = (BX0 - ibx) * 25. + iwf - (nWF / 2);
@@ -113,6 +119,7 @@ void Example02()
   }
 
   tree->Write();
+  puEpdf->Write();
   fileOut->Close();
   file->Close();
 }

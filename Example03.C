@@ -3,7 +3,6 @@
 // > root -l Example03.C
 //
 
-
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1.h>

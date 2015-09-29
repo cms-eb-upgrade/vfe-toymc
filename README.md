@@ -98,6 +98,18 @@ To run
 Example07
 ---------
 
-Same exercise as in Example05 except errors on amplitude and timing are estimated using effective sigma: shortest interval that covers 68%. The advantages of this approach:
+Same exercise as in Example05 except errors on amplitude and timing
+are estimated using effective sigma: shortest interval that covers
+68%. The advantages of this approach:
 - no need to use histograms
 - works for non-Gaussian distributions
+
+
+Example08
+----------
+
+Simulation of APD spike energy and timing. Absolute rate is calculated
+as well.  Timing is ToF adjusted and modulo 25ns. Hence spikes from
+earlier BX are accounted for.  Based on CMSSW simulations for Phase2
+ECAL. Represents an average EB channel (no eta dependence of APD spike
+energy/time)

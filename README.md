@@ -121,7 +121,8 @@ To run
     r99t plot/plot.C\(\"output.root\"\)
 
     
-    
+    g++ -o CreateData.exe  CreateData.C -std=c++11 `root-config --cflags --glibs`
+    ./CreateData.exe
     
     r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",25\)
     r99t -q CreateData.C\(\"data/waveform_signal_10GeV_pu_0.root\",-25\)

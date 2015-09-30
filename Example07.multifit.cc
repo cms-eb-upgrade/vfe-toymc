@@ -47,6 +47,7 @@ TH1F* CreateHistoAmplitudes( const PulseVector& sam, int itime, int type) {
 void run(std::string inputFile, std::string outFile) {
  
  Pulse pSh;
+ pSh.Init();
  
  FullSampleVector fullpulse(FullSampleVector::Zero());
  FullSampleMatrix fullpulsecov(FullSampleMatrix::Zero());

@@ -101,3 +101,10 @@ Example07
 Same exercise as in Example05 except errors on amplitude and timing are estimated using effective sigma: shortest interval that covers 68%. The advantages of this approach:
 - no need to use histograms
 - works for non-Gaussian distributions
+
+TreeReader
+----------
+
+Generates the waveform histograms from the ouput tree of Example02. By default just uses "output.root", but you can specify the file name at the command line
+To run:
+> root -l -q TreeReader.C

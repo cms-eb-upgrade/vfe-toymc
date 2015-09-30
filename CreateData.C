@@ -30,6 +30,10 @@
 int main(int argc, char** argv) {
   
  int shift = 0;
+ if (argc>=2) {
+  shift = atoi(argv[1]);
+ }
+ 
  
  std::cout << " Generation of digitized samples " << std::endl;
  

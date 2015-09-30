@@ -25,21 +25,34 @@
 
 //----                                                                                time shift in ns
 // void CreateData(std::string nameInputFile = "data/waveform_signal_10GeV_pu_0.root", int shift = 0) {
-void CreateData(int shift = 0) {
+// void CreateData(int shift = 0) {
+// int main(int shift = 0) {
+int main(int argc, char** argv) {
   
+ int shift = 0;
+ 
+ std::cout << " Generation of digitized samples " << std::endl;
+ 
  TRandom rnd;
- 
- Pulse pSh;
- 
+  
  TString filenameOutput = Form("mysample_%d.root", shift); 
  
+ Pulse pSh;
+ pSh.Init();
+ 
  // Noise level (GeV)
- double sigmaNoise = 0.044;
+ float sigmaNoise = 0.044;
  
  int NSAMPLES = 10;
  int WFLENGTH = 500;
  int NFREQ = 25;
  int IDSTART = 180;
+ 
+ 
+ 
+ // total number of bunches in "LHC" bunch train
+ //  int NBXTOTAL = 2800;
+ int NBXTOTAL = 100;
  
  
  //
@@ -59,220 +72,136 @@ void CreateData(int shift = 0) {
  //   > root -l -q Example02.C+
  // 
  //
-  
-  // make sure these inputs are what you really want
-  
-  const TString fileInput       = "data/EmptyFileCRRC43.root";
-  const TString fileOutput      = "output.root";
-  const int     nPU             = 0;
-  const int     nEventsTotal    = 100;
-  const float   eta             = 0.0;
-  const float   signalAmplitude = 10.0;
-  
-  TFile *file = new TFile(fileInput.Data());
-  
-  // Get PDF for pileup
-  int indx = 10 * fabs(eta) / 0.1;
-  if( indx < 0 )  indx = 0;
-  if( indx > 13 ) indx = 13;
-  char hname[120];
-  sprintf(hname,"PileupPDFs/pupdf_%d",indx);
-  TH1D *pupdf = (TH1D*)file->Get(hname);
-  pupdf->SetDirectory(0);
-  
-  // Get the Pulse Shape
-  Pulse pSh;
-  
-  // Output file will be created
-  TFile *fileOut = new TFile(fileOutput.Data(),"recreate");
-  TTree *tree = new TTree("Waveforms", "");
-  int    BX0;
-  std::vector<double> energyPU; //---- along a complete LHC circle
-  
-  // output samples
-  
-  int nSmpl = NSAMPLES;
-  int nFreq = NFREQ;
-  //  double samples[NSAMPLES];
-  std::vector<double> samples;
-  double amplitudeTruth;
-  TFile *fileOut = new TFile(filenameOutput.Data(),"recreate");
-  TTree *treeOut = new TTree("Samples", "");
-  
-  treeOut->Branch("nSmpl",             &nSmpl,               "nSmpl/I");
-  treeOut->Branch("nFreq",             &nFreq,               "nFreq/I");
-  treeOut->Branch("amplitudeTruth",    &amplitudeTruth,      "amplitudeTruth/D");
-  treeOut->Branch("samples",           &samples,             "samples/D");
-  
-  
-  // total number of bunches in "LHC" bunch train
-  int NBXTOTAL = 2800;
-  
-  
-  // Add branches
-  int    nBX    = NBXTOTAL;
-  std::vector<int> nMinBias;
-  std::vector<double> energyPU;
-  int    nWF    = WFLENGTH;
-  std::vector<double> waveform;
-  double signalTruth;
-  
-  tree->Branch("BX0",         &BX0,         "BX0/I");
-  tree->Branch("nBX",         &nBX,         "nBX/I");
-  tree->Branch("nWF",         &nWF,         "nWF/I");
-  tree->Branch("nMinBias",    &nMinBias,    "nMinBias");
-  tree->Branch("energyPU",    &energyPU,    "energyPU");
-  tree->Branch("waveform",    &waveform,    "waveform");
-  tree->Branch("signalTruth", &signalTruth, "signalTruth/D");
-  
-  
-  for(int ievt = 0; ievt < nEventsTotal; ievt++){
-   nMinBias.clear();
-   energyPU.clear();
-   for(int ibx = 0; ibx < nBX; ibx++){
-    
-    // number of min-bias interactions in each bunch crossing
-    
-    nMinBias.push_back( rnd.Poisson(nPU) );
-    
-    // total energy per BX
-    
-    energyPU.push_back( 0. );
-    for(int imb = 0; imb < nMinBias[ibx]; imb++){
-     energyPU.at(ibx) += pow(10., pupdf->GetRandom());
-    }
-    
-    // pick in-time BX
-    
-    BX0 = int(nBX * rnd.Rndm());
-   }
-   
-   // waveform, initialize
-   waveform.clear();
-   for(int iwf = 0; iwf < nWF; iwf++){
-    waveform.push_back(0.);
-   }
-   
-   // add pileup to the waveform
-   // time window is nWF ns wide and is centered at BX0
-   
-   int ibxMax = min( BX0+11, nBX );
-   for(int ibx = 0; ibx < ibxMax; ibx++){
-    for(int iwf = 0; iwf < nWF; iwf++){
-     double t = (BX0 - ibx) * 25. + iwf - (nWF / 2);
-     waveform.at(iwf) += energyPU.at(ibx) * pSh.fShape(t);
-    }
-   }
-   
-   // save MC truth for signal
-   
-   signalTruth = signalAmplitude;
-   
-   // add signal to the waveform
-   
-   for(int iwf = 0; iwf < nWF; iwf++){
-    waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2));
-   }
-   
-   
-   
-   
-   
-   
-   
-   tree->Fill();
-  }
-  
-  tree->Write();
-  fileOut->Close();
-  file->Close();
- }
+ 
+ // make sure these inputs are what you really want
+ 
+ const TString fileInput       = "data/EmptyFileCRRC43.root";
+ const int     nPU             = 0;
+ const int     nEventsTotal    = 100;
+ const float   eta             = 0.0;
+ const float   signalAmplitude = 10.0;
+ 
+ TFile *file = new TFile(fileInput.Data());
+ 
+ // Get PDF for pileup
+ int indx = 10 * fabs(eta) / 0.1;
+ if( indx < 0 )  indx = 0;
+ if( indx > 13 ) indx = 13;
+ char hname[120];
+ sprintf(hname,"PileupPDFs/pupdf_%d",indx);
+ TH1D *pupdf = (TH1D*)file->Get(hname);
+ pupdf->SetDirectory(0);
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- // input Waveforms
- 
- TFile *file = new TFile(nameInputFile.c_str());
+ // Output file will be created
  int    BX0;
- int    nWF;
-//  double waveform[WFLENGTH];
- std::vector<double> waveform;
-//  double energyPU[NBXTOTAL]; //---- along a complete LHC circle
- std::vector<double> energyPU; //---- along a complete LHC circle
- double signalTruth;
- TTree *tree = (TTree*)file->Get("Waveforms");
- tree->SetBranchAddress("nWF",          &nWF);
- tree->SetBranchAddress("waveform",     &waveform);
- tree->SetBranchAddress("BX0",          &BX0);
- tree->SetBranchAddress("signalTruth",  &signalTruth);
- tree->SetBranchAddress("energyPU" ,    &energyPU);
+ std::vector<float> energyPU; //---- along a complete LHC circle
  
  // output samples
  
  int nSmpl = NSAMPLES;
  int nFreq = NFREQ;
-//  double samples[NSAMPLES];
- std::vector<double> samples;
- double amplitudeTruth;
+ //  float samples[NSAMPLES];
+ std::vector<float> samples;
+ float amplitudeTruth;
  TFile *fileOut = new TFile(filenameOutput.Data(),"recreate");
  TTree *treeOut = new TTree("Samples", "");
  
+ //---- to be given to reconstruction step
  treeOut->Branch("nSmpl",             &nSmpl,               "nSmpl/I");
  treeOut->Branch("nFreq",             &nFreq,               "nFreq/I");
  treeOut->Branch("amplitudeTruth",    &amplitudeTruth,      "amplitudeTruth/D");
- treeOut->Branch("samples",           &samples,             "samples/D");
+ treeOut->Branch("samples",           &samples,             "samples");
  
- int nentries = tree->GetEntries();
- 
- std::cout << " nentries = " << nentries << std::endl;
- 
- for(int ievt=0; ievt<nentries; ievt++){
   
-  std::vector<double> samplesUncorrelated;
+ 
+ // Add branches
+ int    nBX    = NBXTOTAL;
+ std::vector<int> nMinBias;
+ int    nWF    = WFLENGTH;
+ std::vector<float> waveform;
+ float signalTruth;
+ 
+ //---- support, super-fine sampling
+ treeOut->Branch("BX0",         &BX0,         "BX0/I");
+ treeOut->Branch("nBX",         &nBX,         "nBX/I");
+ treeOut->Branch("nWF",         &nWF,         "nWF/I");
+ treeOut->Branch("nMinBias",    &nMinBias,    "nMinBias");
+ treeOut->Branch("energyPU",    &energyPU,    "energyPU");
+ treeOut->Branch("waveform",    &waveform,    "waveform");
+ treeOut->Branch("signalTruth", &signalTruth, "signalTruth/D");
+ 
+ std::cout << " nEventsTotal = " << nEventsTotal << std::endl;
+ 
+ for(int ievt = 0; ievt < nEventsTotal; ievt++) {
+  std::cout << " ievt = " << ievt << " :: " << nEventsTotal << std::endl;
+  nMinBias.clear();
+  energyPU.clear();
+  for(int ibx = 0; ibx < nBX; ibx++) {
+//    std::cout << " ibx = " << ibx << " :: " << nBX << std::endl;
+   // number of min-bias interactions in each bunch crossing
+   
+   nMinBias.push_back( rnd.Poisson(nPU) );
+   
+   // total energy per BX
+   
+   energyPU.push_back(0.);
+   for(int imb = 0; imb < nMinBias.at(ibx); imb++){
+    energyPU.at(ibx) += pow(10., pupdf->GetRandom());
+   }
+   
+   // pick in-time BX
+   
+   BX0 = int(nBX * rnd.Rndm());
+   while (BX0 > (nBX-15) ) { // ---- 15 or 11 ?
+    BX0 = int(nBX * rnd.Rndm());
+   }
+  }
+    
+  // waveform, initialize
+  waveform.clear();
+  for(int iwf = 0; iwf < nWF; iwf++){
+   waveform.push_back(0.);
+  }
+  
+  // add pileup to the waveform
+  // time window is nWF ns wide and is centered at BX0
+  
+//   int ibxMax = min( BX0+11, nBX );
+//   for(int ibx = 0; ibx < ibxMax; ibx++){
+
+  for(int ibx = 0; ibx < nBX; ibx++){
+//    std::cout << " ibx = " << ibx << " :: " << nBX << " BX0 = " << BX0 << std::endl;
+   for(int iwf = 0; iwf < nWF; iwf++){
+    float t = (BX0 - ibx) * 25. + iwf - (nWF / 2);
+//     if (t<1000) std::cout << " ---> t = " << t << " iwf = " << iwf << " BX0 = " << BX0 << " ibx = " << ibx << " energyPU.size() = " << energyPU.size() << " energyPU.at(ibx) = " << energyPU.at(ibx) ;
+    float temp = waveform.at(iwf);
+//     if (t<1000) std::cout << " ciao " ;
+//     if (t<1000) std::cout << " pSh.fShape(t) = " << pSh.fShape(t) ;
+    
+    waveform.at(iwf) = temp + energyPU.at(ibx) * pSh.fShape(t);
+//     if (t<1000) std::cout << " -> done " << std::endl;
+   }
+  }
+//   std::cout << " done " << std::endl;
+  
+  // save MC truth for signal
+  
+  signalTruth = signalAmplitude;
+  
+
+  // add signal to the waveform
+  for(int iwf = 0; iwf < nWF; iwf++){
+   waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2));
+  }
+//   std::cout << " done " << std::endl;
+  
+  
+  
+  
+  
+  //---- construct the digitized points
+  std::vector<float> samplesUncorrelated;
   
   for(int i=0; i<NSAMPLES; ++i){
    samplesUncorrelated.push_back(rnd.Gaus(0,1));
@@ -290,9 +219,7 @@ void CreateData(int shift = 0) {
    samples.at(i)   *= sigmaNoise;
   }
   
-  // add signal and pileup
-  
-  tree->GetEntry(ievt);
+  // add signal (that includes already the pileup!)
   for(int i=0; i<NSAMPLES; ++i){
    int index = IDSTART + i * NFREQ - shift; //---- time shift "-" on function
    samples.at(i)   += waveform.at(index);
@@ -301,7 +228,11 @@ void CreateData(int shift = 0) {
   // true amplitude = in-time pileup + signal
   amplitudeTruth = signalTruth + energyPU.at(BX0);
   
+//   std::cout << " done 3 " << std::endl;
+  
   treeOut->Fill();
+  
+  
  }
  
  treeOut->Write();

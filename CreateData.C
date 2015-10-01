@@ -23,17 +23,19 @@
 
 #include <TRandom.h>
 
-//----                                                                                time shift in ns
-// void CreateData(std::string nameInputFile = "data/waveform_signal_10GeV_pu_0.root", int shift = 0) {
-// void CreateData(int shift = 0) {
-// int main(int shift = 0) {
 int main(int argc, char** argv) {
   
  int shift = 0;
+ //----  time shift in ns
  if (argc>=2) {
   shift = atoi(argv[1]);
  }
  
+ //---- number of events to generate
+ int nEventsTotal = 100;
+ if (argc>=3) {
+  nEventsTotal = atoi(argv[2]);
+ }
  
  std::cout << " Generation of digitized samples " << std::endl;
  
@@ -55,8 +57,8 @@ int main(int argc, char** argv) {
  
  
  // total number of bunches in "LHC" bunch train
- //  int NBXTOTAL = 2800;
- int NBXTOTAL = 100;
+ int NBXTOTAL = 2800;
+//  int NBXTOTAL = 100;
  
  
  //
@@ -81,7 +83,6 @@ int main(int argc, char** argv) {
  
  const TString fileInput       = "data/EmptyFileCRRC43.root";
  const int     nPU             = 0;
- const int     nEventsTotal    = 100;
  const float   eta             = 0.0;
  const float   signalAmplitude = 10.0;
  
@@ -115,7 +116,7 @@ int main(int argc, char** argv) {
  treeOut->Branch("nSmpl",             &nSmpl,               "nSmpl/I");
  treeOut->Branch("nFreq",             &nFreq,               "nFreq/I");
  treeOut->Branch("amplitudeTruth",    &amplitudeTruth,      "amplitudeTruth/D");
- treeOut->Branch("samples",           &samples,             "samples");
+ treeOut->Branch("samples",           &samples );
  
   
  
@@ -130,15 +131,18 @@ int main(int argc, char** argv) {
  treeOut->Branch("BX0",         &BX0,         "BX0/I");
  treeOut->Branch("nBX",         &nBX,         "nBX/I");
  treeOut->Branch("nWF",         &nWF,         "nWF/I");
- treeOut->Branch("nMinBias",    &nMinBias,    "nMinBias");
+ treeOut->Branch("nMinBias",    &nMinBias );
  treeOut->Branch("energyPU",    &energyPU,    "energyPU");
- treeOut->Branch("waveform",    &waveform,    "waveform");
+ treeOut->Branch("waveform",    &waveform );
  treeOut->Branch("signalTruth", &signalTruth, "signalTruth/D");
  
  std::cout << " nEventsTotal = " << nEventsTotal << std::endl;
  
  for(int ievt = 0; ievt < nEventsTotal; ievt++) {
-  std::cout << " ievt = " << ievt << " :: " << nEventsTotal << std::endl;
+  if (!(ievt%10)) {
+   std::cout << " ievt = " << ievt << " :: " << nEventsTotal << std::endl;
+  }
+  
   nMinBias.clear();
   energyPU.clear();
   for(int ibx = 0; ibx < nBX; ibx++) {

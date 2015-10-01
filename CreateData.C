@@ -247,4 +247,6 @@ int main(int argc, char** argv) {
  fileOut->Close();
  file->Close();
  
+ std::cout << " output file = " << filenameOutput.Data() << std::endl;
+ 
 }

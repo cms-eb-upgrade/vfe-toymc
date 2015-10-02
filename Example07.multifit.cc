@@ -48,10 +48,6 @@ void run(std::string inputFile, std::string outFile) {
  
  std::cout << " run ..." << std::endl;
  
- Pulse pSh;
- pSh.Init();
- 
- 
  //----
  int NSAMPLES = 10;
  int WFLENGTH = 500;
@@ -59,6 +55,9 @@ void run(std::string inputFile, std::string outFile) {
  int IDSTART = 180;
  //----
  
+ Pulse pSh;
+ pSh.SetNSAMPLES ( NSAMPLES );
+ pSh.Init();
  
  
 //  FullSampleVector fullpulse(FullSampleVector::Zero());
@@ -187,6 +186,7 @@ void run(std::string inputFile, std::string outFile) {
   
   for(int i=0; i<NSAMPLES; i++){
    amplitudes[i] = samples->at(i);
+   std::cout << " samples->at(" << i << ") = " << samples->at(i) << std::endl;
   }
   
   v_pulses.push_back(CreateHistoShape(amplitudes, ievt, 0));
@@ -200,6 +200,14 @@ void run(std::string inputFile, std::string outFile) {
   pulsefunc.Init(); //---- initialization, needed
   
   pulsefunc.disableErrorCalculation();
+  
+  std::cout << " amplitudes = " << amplitudes << std::endl;
+  std::cout << " noisecor = " << noisecor << std::endl;
+  std::cout << " pedrms = " << pedrms << std::endl;
+//   std::cout << " activeBX = " << activeBX << std::endl;
+  std::cout << " fullpulse = " << fullpulse << std::endl;
+  std::cout << " fullpulsecov = " << fullpulsecov << std::endl;
+  
   bool status = pulsefunc.DoFit( amplitudes, noisecor, pedrms, activeBX, fullpulse, fullpulsecov );
   double chisq = pulsefunc.ChiSq();
   

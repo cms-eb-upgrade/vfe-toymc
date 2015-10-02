@@ -220,9 +220,11 @@ int main(int argc, char** argv) {
   for(int i=0; i<NSAMPLES; ++i){
    samples.push_back(0);
    for(int j=0; j<NSAMPLES; ++j){
+//     std::cout << " pSh.cholesky(" << i << "," << j << ") = " << pSh.cholesky(i,j) << std::endl;
     samples.at(i) += pSh.cholesky(i,j) * samplesUncorrelated.at(j);
    }
   }
+  
   
   for(int i=0; i<NSAMPLES; ++i){
    samples.at(i)   *= sigmaNoise;
@@ -238,6 +240,10 @@ int main(int argc, char** argv) {
   amplitudeTruth = signalTruth + energyPU.at(BX0);
   
 //   std::cout << " done 3 " << std::endl;
+  
+//   for(int i=0; i<NSAMPLES; ++i){
+//    std::cout << "  samples.at(" << i << ") = " <<  samples.at(i) << std::endl;   
+//   }
   
   treeOut->Fill();
   

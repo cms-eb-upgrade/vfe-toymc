@@ -74,6 +74,9 @@ Pulse::Pulse()
  SetNSAMPLES(10);
  SetNFREQ(25);
  SetIDSTART(180);
+ SetTAU(43.0);
+ SetWFLENGTH(500);
+ 
  _grPS = 0x0;
 }
 
@@ -165,10 +168,11 @@ double Pulse::fShape(double x) {
 
 void Pulse::NoiseInit() {
  
- std::cout << " >> Pulse::NoiseInit " << std::endl;
+//  std::cout << " >> Pulse::NoiseInit " << std::endl;
  
  for(int i=0; i<_NSAMPLES; i++){
   double y = 1. - exp( -double(_NFREQ * i) / (sqrt(2.) * _TAU));
+//   std::cout << "  ----> y(" << i << "::" << _NSAMPLES << " ) = " << y << " _TAU = " << _TAU << " _NFREQ = " << _NFREQ << std::endl;
     _mC.push_back( 1. - y * y);
   }
 
@@ -182,6 +186,9 @@ void Pulse::NoiseInit() {
   }
 
   // decomposition
+  if (_mC.at(0)< 0) {
+//    std::cout << "  ----> _mC.at(0) = " << _mC.at(0) << std::endl;
+  }
   _mL.at(0).at(0) = sqrt(_mC.at(0));
   for( int col=1; col<_NSAMPLES; col++){
    _mL.at(0).at(col) = 0;
@@ -195,6 +202,8 @@ void Pulse::NoiseInit() {
     }
     double sum2 = 0;
     for( int k=0; k<row; ++k) sum2 += _mL.at(row).at(k)*_mL.at(row).at(k);
+//     std::cout << "  ----> _mC.at(0) - sum2 = " << _mC.at(0) << " - " << sum2 << " = " << _mC.at(0) - sum2 << std::endl;
+    
     _mL.at(row).at(row) = sqrt( _mC.at(0) - sum2 );
     for( int col=row+1; col<_NSAMPLES; col++ ) _mL.at(row).at(col) = 0;
   }

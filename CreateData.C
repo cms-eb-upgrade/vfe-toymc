@@ -37,23 +37,48 @@ int main(int argc, char** argv) {
   nEventsTotal = atoi(argv[2]);
  }
  
+ //---- number of samples per impulse
+ int NSAMPLES = 10;
+ if (argc>=4) {
+  NSAMPLES = atoi(argv[3]);
+ }
+ std::cout << " NSAMPLES = " << NSAMPLES << std::endl;
+ 
+ //---- number of samples per impulse
+ int NFREQ = 25;
+ if (argc>=5) {
+  NFREQ = atoi(argv[4]);
+ }
+ std::cout << " NFREQ = " << NFREQ << std::endl;
+ 
  std::cout << " Generation of digitized samples " << std::endl;
  
  TRandom rnd;
   
- TString filenameOutput = Form("mysample_%d.root", shift); 
+ 
+ 
+ TString filenameOutput = Form("mysample_%d_%d_%d.root", shift, NSAMPLES, NFREQ); 
  
  Pulse pSh;
+ pSh.SetNSAMPLES(NSAMPLES);
+ pSh.SetNFREQ(NFREQ);
+ 
+ 
+ int IDSTART = 180;
+//  IDSTART = 180 +  NFREQ * 
+ int WFLENGTH = 500;
+ 
+ if (( IDSTART + NSAMPLES * NFREQ ) > 500 ) {
+  WFLENGTH = IDSTART + NSAMPLES * NFREQ;
+ }
+ 
+ pSh.SetWFLENGTH(WFLENGTH);
  pSh.Init();
+ 
+ 
  
  // Noise level (GeV)
  float sigmaNoise = 0.044;
- 
- int NSAMPLES = 10;
- int WFLENGTH = 500;
- int NFREQ = 25;
- int IDSTART = 180;
- 
  
  
  // total number of bunches in "LHC" bunch train
@@ -161,7 +186,7 @@ int main(int argc, char** argv) {
    // pick in-time BX
    
    BX0 = int(nBX * rnd.Rndm());
-   while (BX0 > (nBX-15) ) { // ---- 15 or 11 ?
+   while (BX0 > (nBX-3*NSAMPLES) || BX0 < (3*NSAMPLES) ) { // ---- 15 or 11 ?
     BX0 = int(nBX * rnd.Rndm());
    }
   }
@@ -233,6 +258,7 @@ int main(int argc, char** argv) {
   // add signal (that includes already the pileup!)
   for(int i=0; i<NSAMPLES; ++i){
    int index = IDSTART + i * NFREQ - shift; //---- time shift "-" on function
+//    std::cout << " index = " << index << std::endl;
    samples.at(i)   += waveform.at(index);
   }    
   

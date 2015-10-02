@@ -44,19 +44,28 @@ TH1F* CreateHistoAmplitudes( const PulseVector& sam, int itime, int type) {
 
 
 
-void run(std::string inputFile, std::string outFile) {
+void run(std::string inputFile, std::string outFile, int NSAMPLES, int NFREQ) {
  
  std::cout << " run ..." << std::endl;
  
  //----
- int NSAMPLES = 10;
+//  int NSAMPLES = 10;
+//  int NFREQ = 25;
  int WFLENGTH = 500;
- int NFREQ = 25;
  int IDSTART = 180;
  //----
  
+ if (( IDSTART + NSAMPLES * NFREQ ) > 500 ) {
+  WFLENGTH = IDSTART + NSAMPLES * NFREQ;
+ }
+ 
+ 
+ 
  Pulse pSh;
- pSh.SetNSAMPLES ( NSAMPLES );
+ pSh.SetNSAMPLES (NSAMPLES);
+ pSh.SetNFREQ (NFREQ);
+ pSh.SetWFLENGTH(WFLENGTH);
+ 
  pSh.Init();
  
  
@@ -101,28 +110,37 @@ void run(std::string inputFile, std::string outFile) {
  }
  
  
+ //----  collision every 25 ns -> this is fixed number
+ //----                       number of sampls * frequence in ns / 25 ns
+ int totalNumberOfBxActive = (NSAMPLES * NFREQ) / 25;
  
- //   int activeBXs[] = { -5, -4, -3, -2, -1,  0,  1,  2,  3,  4 };
  int activeBXs[100];
- if (NSAMPLES == 10) {
-  for (unsigned int ibx=0; ibx<NSAMPLES; ++ibx) {
-   activeBXs[ibx] = ibx - NSAMPLES/2;
-   std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
-  }
- }
- else {
-  for (unsigned int ibx=0; ibx<10; ++ibx) {
-   activeBXs[ibx] = 2*ibx - NSAMPLES/2;
-   std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
-  }
+ for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
+  activeBXs[ibx] = ibx * 25./NFREQ - NSAMPLES/2;
+  std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
  }
  
  
- //---- whatever the sampling, it is always 10!
- //----   if you sample more, soem BX will be empty
- //----   otherwise all BX will be active ones
- activeBX.resize(10);
- for (unsigned int ibx=0; ibx<10; ++ibx) {
+ 
+ 
+//  //   int activeBXs[] = { -5, -4, -3, -2, -1,  0,  1,  2,  3,  4 };
+//  int activeBXs[100];
+//  if (NSAMPLES == 10) {
+//   for (unsigned int ibx=0; ibx<NSAMPLES; ++ibx) {
+//    activeBXs[ibx] = ibx - NSAMPLES/2;
+//    std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
+//   }
+//  }
+//  else {
+//   for (unsigned int ibx=0; ibx<10; ++ibx) {
+//    activeBXs[ibx] = 2*ibx - NSAMPLES/2;
+//    std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
+//   }
+//  }
+ 
+ 
+ activeBX.resize(totalNumberOfBxActive);
+ for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
   activeBX.coeffRef(ibx) = activeBXs[ibx];
  } 
  
@@ -159,15 +177,24 @@ void run(std::string inputFile, std::string outFile) {
  
  TTree* newtree = (TTree*) tree->CloneTree(0); //("RecoAndSim");
  newtree->SetName("RecoAndSim");
- //---- whatever the sampling, it is always 10!
- //----   if you sample more, some BX will be empty
- //----   otherwise all BX will be active ones
- double samplesReco[10];
+ 
+ std::vector <double> samplesReco;
  int ipulseintime = 0;
- newtree->Branch("samplesReco",   samplesReco,   "samplesReco[10]/D");
+ newtree->Branch("samplesReco",   &samplesReco);
  newtree->Branch("ipulseintime",  ipulseintime,  "ipulseintime/I");
  
+ for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
+  samplesReco.push_back(0.);
+ }
+ 
+ 
  v_amplitudes_reco.clear();
+ 
+ //---- create the multifit
+ PulseChiSqSNNLS pulsefunc;
+ pulsefunc.setNSAMPLES(NSAMPLES);
+ pulsefunc.Init(); //---- initialization, needed
+ 
  
  for(int ievt=0; ievt<nentries; ++ievt){
   
@@ -175,18 +202,18 @@ void run(std::string inputFile, std::string outFile) {
    std::cout << " ievt = " << ievt << " :: " << nentries << std::endl;
   }
   
-  std::cout << " here " << std::endl;
+//   std::cout << " here " << std::endl;
   
   tree->GetEntry(ievt);
   
-  std::cout << " here " << std::endl;
+//   std::cout << " here " << std::endl;
   
-  std::cout << " samples->size() = " << samples->size() << std::endl;
+//   std::cout << " samples->size() = " << samples->size() << std::endl;
   
   
   for(int i=0; i<NSAMPLES; i++){
    amplitudes[i] = samples->at(i);
-   std::cout << " samples->at(" << i << ") = " << samples->at(i) << std::endl;
+//    std::cout << " samples->at(" << i << ") = " << samples->at(i) << std::endl;
   }
   
   v_pulses.push_back(CreateHistoShape(amplitudes, ievt, 0));
@@ -194,19 +221,15 @@ void run(std::string inputFile, std::string outFile) {
   double pedval = 0.;
   double pedrms = 1.0;
   
-  //---- create the multifit
-  PulseChiSqSNNLS pulsefunc;
-  pulsefunc.setNSAMPLES(NSAMPLES);
-  pulsefunc.Init(); //---- initialization, needed
-  
+   
   pulsefunc.disableErrorCalculation();
   
-  std::cout << " amplitudes = " << amplitudes << std::endl;
-  std::cout << " noisecor = " << noisecor << std::endl;
-  std::cout << " pedrms = " << pedrms << std::endl;
-//   std::cout << " activeBX = " << activeBX << std::endl;
-  std::cout << " fullpulse = " << fullpulse << std::endl;
-  std::cout << " fullpulsecov = " << fullpulsecov << std::endl;
+//   std::cout << " amplitudes = " << amplitudes << std::endl;
+//   std::cout << " noisecor = " << noisecor << std::endl;
+//   std::cout << " pedrms = " << pedrms << std::endl;
+// //   std::cout << " activeBX = " << activeBX << std::endl;
+//   std::cout << " fullpulse = " << fullpulse << std::endl;
+//   std::cout << " fullpulsecov = " << fullpulsecov << std::endl;
   
   bool status = pulsefunc.DoFit( amplitudes, noisecor, pedrms, activeBX, fullpulse, fullpulsecov );
   double chisq = pulsefunc.ChiSq();
@@ -214,23 +237,23 @@ void run(std::string inputFile, std::string outFile) {
   ipulseintime = 0;
   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs()->rows(); ++ipulse) {
    if (pulsefunc.BXs()->coeff(ipulse)==0) {
-    std::cout << " found intime!!! --> " << ipulse << std::endl;
+//     std::cout << " found intime!!! --> " << ipulse << std::endl;
     ipulseintime = ipulse;
     break;
    }
   }
-  std::cout << "  >> ipulseintime = " << ipulseintime << std::endl;
-  std::cout << "  >> status =       " << status << std::endl;
+//   std::cout << "  >> ipulseintime = " << ipulseintime << std::endl;
+//   std::cout << "  >> status =       " << status << std::endl;
   
   double aMax = status ? (*(pulsefunc.X()))[ipulseintime] : 0.;
   //  double aErr = status ? pulsefunc.Errors()[ipulseintime] : 0.;
   
-  std::cout << " pulsefunc.BXs().rows() = " << pulsefunc.BXs()->rows() << std::endl;
-  std::cout << " pulsefunc.X() = " <<  pulsefunc.X() << std::endl;
+//   std::cout << " pulsefunc.BXs().rows() = " << pulsefunc.BXs()->rows() << std::endl;
+//   std::cout << " pulsefunc.X() = " <<  pulsefunc.X() << std::endl;
   
   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs()->rows(); ++ipulse) {
    if (status) {
-    std::cout << " ip = " << ipulse << " --> " << int(pulsefunc.BXs()->coeff(ipulse)) << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
+//     std::cout << " ip = " << ipulse << " --> " << int(pulsefunc.BXs()->coeff(ipulse)) << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
     samplesReco[ int(pulsefunc.BXs()->coeff(ipulse)) + 5] = (*(pulsefunc.X()))[ ipulse ];
     //     samplesReco[ int(pulsefunc.BXs().coeff(ipulse)) + 5] = pulsefunc.X()[ int(pulsefunc.BXs().coeff(ipulse)) + 5 ];
     //     samplesReco[ipulse] = pulsefunc.X()[ ipulse ];
@@ -252,6 +275,7 @@ void run(std::string inputFile, std::string outFile) {
   v_amplitudes_reco.push_back(CreateHistoAmplitudes(*(pulsefunc.X()), ievt, 1));  
   
   h01->Fill(aMax - amplitudeTruth);
+//   std::cout << " aMax - amplitudeTruth = " << aMax << " - " << amplitudeTruth << std::endl;
   
   newtree->Fill();
   
@@ -283,6 +307,8 @@ void run(std::string inputFile, std::string outFile) {
  h01->Write();
  fout->Close();
  
+ std::cout << " done ... " << std::endl;
+ 
 }
 
 
@@ -305,7 +331,23 @@ int main(int argc, char** argv) {
  }
  std::cout << " outFile = " << outFile << std::endl;
  
- run(inputFile, outFile);
+ //---- number of samples per impulse
+ int NSAMPLES = 10;
+ if (argc>=4) {
+  NSAMPLES = atoi(argv[3]);
+ }
+ std::cout << " NSAMPLES = " << NSAMPLES << std::endl;
+ 
+ //---- number of samples per impulse
+ int NFREQ = 25;
+ if (argc>=5) {
+  NFREQ = atoi(argv[4]);
+ }
+ std::cout << " NFREQ = " << NFREQ << std::endl;
+ 
+ 
+ 
+ run(inputFile, outFile, NSAMPLES, NFREQ);
  
  return 0;
 }

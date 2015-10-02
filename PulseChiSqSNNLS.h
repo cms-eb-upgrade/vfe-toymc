@@ -101,6 +101,8 @@ protected:
    double _chisq;
    bool _computeErrors;
 
+   
+   bool _debug;
  
 };
 

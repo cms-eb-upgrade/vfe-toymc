@@ -100,15 +100,15 @@ int main(int argc, char** argv) {
  
  // Output file will be created
  int    BX0;
- std::vector<float> energyPU; //---- along a complete LHC circle
+ std::vector<double> energyPU; //---- along a complete LHC circle
  
  // output samples
  
  int nSmpl = NSAMPLES;
  int nFreq = NFREQ;
- //  float samples[NSAMPLES];
- std::vector<float> samples;
- float amplitudeTruth;
+ //  double samples[NSAMPLES];
+ std::vector<double> samples;
+ double amplitudeTruth;
  TFile *fileOut = new TFile(filenameOutput.Data(),"recreate");
  TTree *treeOut = new TTree("Samples", "");
  
@@ -124,8 +124,8 @@ int main(int argc, char** argv) {
  int    nBX    = NBXTOTAL;
  std::vector<int> nMinBias;
  int    nWF    = WFLENGTH;
- std::vector<float> waveform;
- float signalTruth;
+ std::vector<double> waveform;
+ double signalTruth;
  
  //---- support, super-fine sampling
  treeOut->Branch("BX0",         &BX0,         "BX0/I");
@@ -181,9 +181,9 @@ int main(int argc, char** argv) {
   for(int ibx = 0; ibx < nBX; ibx++){
 //    std::cout << " ibx = " << ibx << " :: " << nBX << " BX0 = " << BX0 << std::endl;
    for(int iwf = 0; iwf < nWF; iwf++){
-    float t = (BX0 - ibx) * 25. + iwf - (nWF / 2);
+    double t = (BX0 - ibx) * 25. + iwf - (nWF / 2);
 //     if (t<1000) std::cout << " ---> t = " << t << " iwf = " << iwf << " BX0 = " << BX0 << " ibx = " << ibx << " energyPU.size() = " << energyPU.size() << " energyPU.at(ibx) = " << energyPU.at(ibx) ;
-    float temp = waveform.at(iwf);
+    double temp = waveform.at(iwf);
 //     if (t<1000) std::cout << " ciao " ;
 //     if (t<1000) std::cout << " pSh.fShape(t) = " << pSh.fShape(t) ;
     
@@ -209,13 +209,14 @@ int main(int argc, char** argv) {
   
   
   //---- construct the digitized points
-  std::vector<float> samplesUncorrelated;
+  std::vector<double> samplesUncorrelated;
   
   for(int i=0; i<NSAMPLES; ++i){
    samplesUncorrelated.push_back(rnd.Gaus(0,1));
   }
   
   // Noise correlations
+  samples.clear();
   for(int i=0; i<NSAMPLES; ++i){
    samples.push_back(0);
    for(int j=0; j<NSAMPLES; ++j){

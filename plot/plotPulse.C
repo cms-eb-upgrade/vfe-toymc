@@ -1,0 +1,58 @@
+//---- plot output of multifit
+
+void plotPulse (std::string nameInputFile = "output.root"){
+ 
+ TFile *file = new TFile(nameInputFile.c_str());
+ 
+ TTree* tree = (TTree*) file->Get("RecoAndSim");
+  
+ int    nWF;
+ std::vector<double>* waveform = new std::vector<double>;
+ std::vector<double>* samplesReco = new std::vector<double>;
+ std::vector<double>* samples = new std::vector<double>;
+ 
+ tree->SetBranchAddress("nWF",      &nWF);
+ tree->SetBranchAddress("waveform", &waveform);
+ tree->SetBranchAddress("samplesReco", &samplesReco);
+ tree->SetBranchAddress("samples", &samples);
+ 
+ tree->GetEntry(10);
+ 
+ TCanvas* ccwaveform = new TCanvas ("ccwaveform","",800,600);
+ TGraph *gr = new TGraph();
+ for(int i=0; i<nWF; i++){
+  gr->SetPoint(i, i, waveform->at(i));
+ }
+ gr->Draw("AL");
+ 
+ 
+ 
+ TCanvas* ccReco = new TCanvas ("ccReco","",800,600);
+ TGraph *grReco = new TGraph();
+ for(int i=0; i<samplesReco->size(); i++){
+  grReco->SetPoint(i, i, samplesReco->at(i));
+ }
+ grReco->SetMarkerSize(2);
+ grReco->SetMarkerStyle(22);
+ grReco->SetMarkerColor(kBlue);
+ grReco->Draw("ALP");
+ grReco->GetXaxis()->SetTitle("BX");
+ 
+ 
+ TCanvas* ccPulse = new TCanvas ("ccPulse","",800,600);
+ TGraph *grPulse = new TGraph();
+ for(int i=0; i<samples->size(); i++){
+  grPulse->SetPoint(i, i, samples->at(i));
+ }
+ grPulse->SetMarkerSize(2);
+ grPulse->SetMarkerStyle(21);
+ grPulse->SetMarkerColor(kRed);
+ grPulse->Draw("ALP");
+ grPulse->GetXaxis()->SetTitle("BX");
+ 
+ 
+ 
+ 
+}
+
+

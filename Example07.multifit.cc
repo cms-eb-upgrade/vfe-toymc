@@ -44,7 +44,7 @@ TH1F* CreateHistoAmplitudes( const PulseVector& sam, int itime, int type) {
 
 
 
-void run(std::string inputFile, std::string outFile, int NSAMPLES, int NFREQ) {
+void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) {
  
  std::cout << " run ..." << std::endl;
  
@@ -112,7 +112,10 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, int NFREQ) {
  
  //----  collision every 25 ns -> this is fixed number
  //----                       number of sampls * frequence in ns / 25 ns
- int totalNumberOfBxActive = (NSAMPLES * NFREQ) / 25;
+ if ( round((NSAMPLES * NFREQ) / 25.) != (NSAMPLES * NFREQ) / 25 ) {
+  std::cout << " Attention please! How do you think multifit can fit a pulse in the middle between collisions!?!?!?!?" << std::endl;
+ }
+ int totalNumberOfBxActive = int(NSAMPLES * NFREQ) / 25;
  
  int activeBXs[100];
  for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {

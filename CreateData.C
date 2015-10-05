@@ -45,9 +45,9 @@ int main(int argc, char** argv) {
  std::cout << " NSAMPLES = " << NSAMPLES << std::endl;
  
  //---- number of samples per impulse
- int NFREQ = 25;
+ float NFREQ = 25;
  if (argc>=5) {
-  NFREQ = atoi(argv[4]);
+  NFREQ = atof(argv[4]);
  }
  std::cout << " NFREQ = " << NFREQ << std::endl;
  
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   
  
  
- TString filenameOutput = Form("mysample_%d_%d_%d.root", shift, NSAMPLES, NFREQ); 
+ TString filenameOutput = Form("mysample_%d_%d_%f.root", shift, NSAMPLES, NFREQ); 
  
  Pulse pSh;
  pSh.SetNSAMPLES(NSAMPLES);
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
  // output samples
  
  int nSmpl = NSAMPLES;
- int nFreq = NFREQ;
+ float nFreq = NFREQ;
  //  double samples[NSAMPLES];
  std::vector<double> samples;
  double amplitudeTruth;
@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
  
  //---- to be given to reconstruction step
  treeOut->Branch("nSmpl",             &nSmpl,               "nSmpl/I");
- treeOut->Branch("nFreq",             &nFreq,               "nFreq/I");
+ treeOut->Branch("nFreq",             &nFreq,               "nFreq/F");
  treeOut->Branch("amplitudeTruth",    &amplitudeTruth,      "amplitudeTruth/D");
  treeOut->Branch("samples",           &samples );
  
@@ -257,7 +257,7 @@ int main(int argc, char** argv) {
   
   // add signal (that includes already the pileup!)
   for(int i=0; i<NSAMPLES; ++i){
-   int index = IDSTART + i * NFREQ - shift; //---- time shift "-" on function
+   int index = IDSTART + int(i * NFREQ) - shift; //---- time shift "-" on function
 //    std::cout << " index = " << index << std::endl;
    samples.at(i)   += waveform.at(index);
   }    

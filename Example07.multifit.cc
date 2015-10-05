@@ -59,12 +59,14 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
   WFLENGTH = IDSTART + NSAMPLES * NFREQ + 100;
  }
  std::cout << " WFLENGTH = " << WFLENGTH << std::endl;
+ std::cout << " NFREQ    = " << NFREQ << std::endl;
  
  
  Pulse pSh;
  pSh.SetNSAMPLES (NSAMPLES);
  pSh.SetNFREQ (NFREQ);
  pSh.SetWFLENGTH(WFLENGTH);
+ pSh.SetIDSTART(IDSTART);
  
  pSh.Init();
  
@@ -94,7 +96,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
 //  double pulseShapeTemplate[NSAMPLES+2];
  std::vector<double> pulseShapeTemplate;
  for(int i=0; i<(NSAMPLES+2); i++){
-  double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2);
+  double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 + 25); //----> + 25 or not?
 //   pulseShapeTemplate[i] = pSh.fShape(x);
   pulseShapeTemplate.push_back( pSh.fShape(x) );
  }
@@ -118,7 +120,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  int totalNumberOfBxActive = int(NSAMPLES * NFREQ) / 25;
  std::cout << " totalNumberOfBxActive = " << totalNumberOfBxActive << std::endl;
  
- int activeBXs[200];
+ int activeBXs[500];
  for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
   activeBXs[ibx] = ibx * 25./NFREQ - NSAMPLES/2;
   std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
@@ -128,7 +130,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  
 //  //   int activeBXs[] = { -5, -4, -3, -2, -1,  0,  1,  2,  3,  4 };
-//  int activeBXs[200];
+//  int activeBXs[500];
 //  if (NSAMPLES == 10) {
 //   for (unsigned int ibx=0; ibx<NSAMPLES; ++ibx) {
 //    activeBXs[ibx] = ibx - NSAMPLES/2;
@@ -177,10 +179,10 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  std::cout << " outFile = " << outFile << std::endl;
  fout = new TFile(outFile.c_str(),"recreate");
- h01 = new TH1D("h01", "dA", 2000, -5.0, 5.0);
+ h01 = new TH1D("h01", "dA", 5000, -5.0, 5.0);
  
- TTree* newtree = (TTree*) tree->CloneTree(0); //("RecoAndSim");
  fout->cd();
+ TTree* newtree = (TTree*) tree->CloneTree(0); //("RecoAndSim");
  newtree->SetName("RecoAndSim");
  
  std::vector <double> samplesReco;
@@ -204,7 +206,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  for(int ievt=0; ievt<nentries; ++ievt){
   
-  if (!(ievt%10)) {
+  if (!(ievt%1)) {
    std::cout << " ievt = " << ievt << " :: " << nentries << std::endl;
   }
   
@@ -222,7 +224,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
 //    std::cout << " samples->at(" << i << ") = " << samples->at(i) << std::endl;
   }
   
-  v_pulses.push_back(CreateHistoShape(amplitudes, ievt, 0));
+//   v_pulses.push_back(CreateHistoShape(amplitudes, ievt, 0));
   
   double pedval = 0.;
   double pedrms = 1.0;
@@ -278,7 +280,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
   
   //   v_pulses_reco.push_back(CreateHistoShape(amplitudes, ievt, 1));
   
-  v_amplitudes_reco.push_back(CreateHistoAmplitudes(*(pulsefunc.X()), ievt, 1));  
+//   v_amplitudes_reco.push_back(CreateHistoAmplitudes(*(pulsefunc.X()), ievt, 1));  
   
   h01->Fill(aMax - amplitudeTruth);
 //   std::cout << " aMax - amplitudeTruth = " << aMax << " - " << amplitudeTruth << std::endl;

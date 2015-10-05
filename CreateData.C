@@ -72,6 +72,7 @@ int main(int argc, char** argv) {
   WFLENGTH = IDSTART + NSAMPLES * NFREQ + 100;
  }
  
+ pSh.SetIDSTART(IDSTART);
  pSh.SetWFLENGTH(WFLENGTH);
  pSh.Init();
  
@@ -206,7 +207,7 @@ int main(int argc, char** argv) {
   for(int ibx = 0; ibx < nBX; ibx++){
 //    std::cout << " ibx = " << ibx << " :: " << nBX << " BX0 = " << BX0 << std::endl;
    for(int iwf = 0; iwf < nWF; iwf++){
-    double t = (BX0 - ibx) * 25. + iwf - (nWF / 2);
+    double t = (BX0 - ibx) * 25. + iwf - (nWF / 2) + 25.;
 //     if (t<1000) std::cout << " ---> t = " << t << " iwf = " << iwf << " BX0 = " << BX0 << " ibx = " << ibx << " energyPU.size() = " << energyPU.size() << " energyPU.at(ibx) = " << energyPU.at(ibx) ;
     double temp = waveform.at(iwf);
 //     if (t<1000) std::cout << " ciao " ;
@@ -225,7 +226,7 @@ int main(int argc, char** argv) {
 
   // add signal to the waveform
   for(int iwf = 0; iwf < nWF; iwf++){
-   waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2));
+   waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2) + 25.);
   }
 //   std::cout << " done " << std::endl;
   

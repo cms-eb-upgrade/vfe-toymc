@@ -56,9 +56,9 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  //----
  
  if (( IDSTART + NSAMPLES * NFREQ ) > 500 ) {
-  WFLENGTH = IDSTART + NSAMPLES * NFREQ;
+  WFLENGTH = IDSTART + NSAMPLES * NFREQ + 100;
  }
- 
+ std::cout << " WFLENGTH = " << WFLENGTH << std::endl;
  
  
  Pulse pSh;
@@ -116,8 +116,9 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
   std::cout << " Attention please! How do you think multifit can fit a pulse in the middle between collisions!?!?!?!?" << std::endl;
  }
  int totalNumberOfBxActive = int(NSAMPLES * NFREQ) / 25;
+ std::cout << " totalNumberOfBxActive = " << totalNumberOfBxActive << std::endl;
  
- int activeBXs[100];
+ int activeBXs[200];
  for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
   activeBXs[ibx] = ibx * 25./NFREQ - NSAMPLES/2;
   std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
@@ -127,7 +128,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  
 //  //   int activeBXs[] = { -5, -4, -3, -2, -1,  0,  1,  2,  3,  4 };
-//  int activeBXs[100];
+//  int activeBXs[200];
 //  if (NSAMPLES == 10) {
 //   for (unsigned int ibx=0; ibx<NSAMPLES; ++ibx) {
 //    activeBXs[ibx] = ibx - NSAMPLES/2;
@@ -176,9 +177,10 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  std::cout << " outFile = " << outFile << std::endl;
  fout = new TFile(outFile.c_str(),"recreate");
- h01 = new TH1D("h01", "dA", 1000, -5.0, 5.0);
+ h01 = new TH1D("h01", "dA", 2000, -5.0, 5.0);
  
  TTree* newtree = (TTree*) tree->CloneTree(0); //("RecoAndSim");
+ fout->cd();
  newtree->SetName("RecoAndSim");
  
  std::vector <double> samplesReco;
@@ -198,6 +200,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  pulsefunc.setNSAMPLES(NSAMPLES);
  pulsefunc.Init(); //---- initialization, needed
  
+ fout->cd();
  
  for(int ievt=0; ievt<nentries; ++ievt){
   
@@ -289,25 +292,24 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  fout->cd();
  fout->mkdir("samples");
  fout->cd("samples"); 
- for (int ievt = 0; ievt < v_pulses.size(); ievt++) {
-  v_pulses.at(ievt)->Write();
- }
- 
- //  for (int ievt = 0; ievt < v_pulses_reco.size(); ievt++) {
- //   v_pulses_reco.at(ievt)->Write();
- //  }
- 
- for (int ievt = 0; ievt < v_amplitudes_reco.size(); ievt++) {
-  v_amplitudes_reco.at(ievt)->Write();
- }
+//  for (int ievt = 0; ievt < v_pulses.size(); ievt++) {
+//   v_pulses.at(ievt)->Write();
+//  }
+//  
+//  for (int ievt = 0; ievt < v_amplitudes_reco.size(); ievt++) {
+//   v_amplitudes_reco.at(ievt)->Write();
+//  }
  
  std::cout << "  Mean of REC-MC = " << h01->GetMean() << " GeV" << std::endl;
  std::cout << "   RMS of REC-MC = " << h01->GetRMS()  << " GeV" << std::endl;
  
  
  fout->cd();
+ std::cout << " done (1) " << std::endl;
  newtree->AutoSave();
+ std::cout << " done (2) " << std::endl;
  h01->Write();
+ std::cout << " done (3) " << std::endl;
  fout->Close();
  
  std::cout << " done ... " << std::endl;
@@ -342,9 +344,9 @@ int main(int argc, char** argv) {
  std::cout << " NSAMPLES = " << NSAMPLES << std::endl;
  
  //---- number of samples per impulse
- int NFREQ = 25;
+ float NFREQ = 25;
  if (argc>=5) {
-  NFREQ = atoi(argv[4]);
+  NFREQ = atof(argv[4]);
  }
  std::cout << " NFREQ = " << NFREQ << std::endl;
  

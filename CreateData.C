@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   
  
  
- TString filenameOutput = Form("mysample_%d_%d_%f.root", shift, NSAMPLES, NFREQ); 
+ TString filenameOutput = Form("mysample_%d_%d_%.2f.root", shift, NSAMPLES, NFREQ); 
  
  Pulse pSh;
  pSh.SetNSAMPLES(NSAMPLES);
@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
  int WFLENGTH = 500;
  
  if (( IDSTART + NSAMPLES * NFREQ ) > 500 ) {
-  WFLENGTH = IDSTART + NSAMPLES * NFREQ;
+  WFLENGTH = IDSTART + NSAMPLES * NFREQ + 100;
  }
  
  pSh.SetWFLENGTH(WFLENGTH);

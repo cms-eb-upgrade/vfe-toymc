@@ -2,7 +2,7 @@
 
 void plot (std::string nameInputFile = "output.root"){
  
- Color_t* color = new Color_t [100];
+ Color_t* color = new Color_t [200];
  color[0] = kRed ;
  color[1] = kAzure + 10 ;
  color[2] = kYellow + 2 ;
@@ -24,7 +24,7 @@ void plot (std::string nameInputFile = "output.root"){
  
  TCanvas* cc = new TCanvas ("cc","",800,600);
  
- TH1F* histo[100];
+ TH1F* histo[200];
  
  TLegend* leg = new TLegend(0.1,0.7,0.48,0.9);
  std::vector<double>* samplesReco = new std::vector<double>;

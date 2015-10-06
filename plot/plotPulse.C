@@ -24,6 +24,9 @@ void plotPulse (std::string nameInputFile = "output.root"){
   gr->SetPoint(i, i, waveform->at(i));
  }
  gr->Draw("AL");
+ gr->SetLineColor(kMagenta);
+ gr->SetLineWidth(2);
+ gr->GetXaxis()->SetTitle("time [ns]");
  
  
  

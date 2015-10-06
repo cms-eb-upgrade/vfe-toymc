@@ -9,7 +9,8 @@ PulseChiSqSNNLS::PulseChiSqSNNLS() :
 {
   
  _debug = false;
-  
+//  _debug = true;
+ 
   Eigen::initParallel();
       
 }  

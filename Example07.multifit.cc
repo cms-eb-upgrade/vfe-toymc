@@ -96,8 +96,9 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
 //  double pulseShapeTemplate[NSAMPLES+2];
  std::vector<double> pulseShapeTemplate;
  for(int i=0; i<(NSAMPLES+2); i++){
-  double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 + 25); //----> + 25 or not?
-//   pulseShapeTemplate[i] = pSh.fShape(x);
+//   double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 + 25); //----> + 25 or not?
+  double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 ); //----> + 25 or not?
+  //   pulseShapeTemplate[i] = pSh.fShape(x);
   pulseShapeTemplate.push_back( pSh.fShape(x) );
  }
  //  for(int i=0; i<(NSAMPLES+2); i++) pulseShapeTemplate[i] /= pulseShapeTemplate[2];

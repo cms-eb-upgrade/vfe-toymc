@@ -86,7 +86,12 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
     int bx = _bxs->coeff(ipulse);
 //     std::cout << " PulseChiSqSNNLS::DoFit::bx = " << bx << std::endl;
     int firstsamplet = std::max(0,bx + 3);
-    int offset = 7-3-bx;
+//     int offset = 7-3-bx;
+    int offset = (_NSAMPLES/2 + 2) - 3 - bx;
+//     int offset =  _NSAMPLES/2 + int(2 * 25 /_NFREQ) - 3 - bx;
+//     int offset = (_NSAMPLES-3)-3-bx;
+    
+//     std::cout << " firstsamplet+offset= " << firstsamplet+offset << " = " << firstsamplet << " + " << offset << std::endl; 
     
     const unsigned int nsamplepulse = nsample-firstsamplet;
     _pulsemat->col(ipulse).segment(firstsamplet,nsamplepulse) = fullpulse.segment(firstsamplet+offset,nsamplepulse);
@@ -237,8 +242,12 @@ bool PulseChiSqSNNLS::updateCov(const SampleMatrix &samplecor, double pederr, co
     if (_ampvec->coeff(ipulse)==0.) continue;
     int bx = _bxs->coeff(ipulse);
     int firstsamplet = std::max(0,bx + 3);
-    int offset = 7-3-bx;
-        
+//     int firstsamplet = std::max(0,bx + 3 * 25 /_NFREQ);
+//     int offset = 7-3-bx;
+    int offset = (_NSAMPLES/2 + 2) - 3 - bx;
+        //     int offset =  _NSAMPLES/2 + int(2 * 25 /_NFREQ) - 3 - bx;
+    //     int offset = (_NSAMPLES-3)-3-bx;
+    
     double ampsq = (_ampvec->coeff(ipulse)) * (_ampvec->coeff(ipulse));
     
     const unsigned int nsamplepulse = nsample-firstsamplet;    

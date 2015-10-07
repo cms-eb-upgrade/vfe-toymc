@@ -34,7 +34,8 @@ void plot (std::string nameInputFile = "output.root"){
  
  for (int i=0; i<totBX; i++) {
   TString nameHisto = Form ("samplesReco_%d", i);
-  TString nameHistoTitle = Form ("BX %d", i-5);
+//   TString nameHistoTitle = Form ("BX %d", i-5);
+  TString nameHistoTitle = Form ("BX %d", i);
   histo[i] = new TH1F (nameHisto.Data(), nameHistoTitle.Data(), 3000, 0, 20);
   
   TString toDraw = Form ("samplesReco[%d] >> %s", i, nameHisto.Data());

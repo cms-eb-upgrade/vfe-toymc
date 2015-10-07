@@ -54,6 +54,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  int WFLENGTH = 500;
  int IDSTART = 180;
  //----
+//  IDSTART = 7.2 * NFREQ;
  
  if (( IDSTART + NSAMPLES * NFREQ ) > 500 ) {
   WFLENGTH = IDSTART + NSAMPLES * NFREQ + 100;
@@ -70,6 +71,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  pSh.Init();
  
+ std::cout << " pSh ready " << std::endl;
  
 //  FullSampleVector fullpulse(FullSampleVector::Zero());
 //  FullSampleMatrix fullpulsecov(FullSampleMatrix::Zero());
@@ -90,19 +92,55 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  activeBX.resize(Eigen::NoChange,1);
  amplitudes.resize(NSAMPLES,1); amplitudes.setZero(); // (SampleVector::Zero());
  
+ std::cout << " default ready " << std::endl;
  
  
  // intime sample is [2]
 //  double pulseShapeTemplate[NSAMPLES+2];
  std::vector<double> pulseShapeTemplate;
- for(int i=0; i<(NSAMPLES+2); i++){
-//   double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 + 25); //----> + 25 or not?
-  double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 ); //----> + 25 or not?
+ for(int i=0; i<(2*NSAMPLES+2); i++){
+//  for(int i=0; i<(NSAMPLES+2); i++){
+   //   double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 + 25); //----> + 25 or not?
+//   double x = double( IDSTART + NFREQ * (i + 3) - WFLENGTH / 2 ); //----> + 25 or not?
+//   double x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2 + 25.);
+//   double x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2 );  // ----> best for 25 ns spacing??
+//   double x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2 + 5  );  //--------------> this is the residual of the 180 ns shift ... arbitrary 180 ns!!! 
+//   double x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2 + 5 + 25 * ( int( IDSTART / NFREQ ) - ( IDSTART / NFREQ ) ) );   
+
+  double x;
+  if ( NFREQ == 25)    x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2 );   
+  if ( NFREQ == 6.25)  x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2  + 5);   
+  if ( NFREQ == 12.5)  x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2  + 10);   
+  
+  
+  //   double x = double( IDSTART + NFREQ * (i) + 3*25. - WFLENGTH / 2 - 25.); 
+//   double x = double( NFREQ * (i) + 3*25. - WFLENGTH / 2 - 25.); 
+  //   double x = double( IDSTART + NFREQ * (i) - WFLENGTH / 2 ); 
   //   pulseShapeTemplate[i] = pSh.fShape(x);
   pulseShapeTemplate.push_back( pSh.fShape(x) );
+  
+  std::cout << " [" << i << "] --> pSh.fShape(" << x << ") = " << pSh.fShape(x) << std::endl;
  }
  //  for(int i=0; i<(NSAMPLES+2); i++) pulseShapeTemplate[i] /= pulseShapeTemplate[2];
- for (int i=0; i<(NSAMPLES+2); ++i) fullpulse(i+7) = pulseShapeTemplate[i];
+//  for (int i=0; i<(NSAMPLES+2); i++) fullpulse(i+(NSAMPLES-3)) = pulseShapeTemplate[i];
+//  for (int i=0; i<(NSAMPLES+2); i++) fullpulse(i+7) = pulseShapeTemplate[i];
+ //  7 before was due to 
+ //  IDSTART = 180 ns = 7.2 * 25 ns ;
+ //  now it should be, in a more general way:
+ //  180 ns = X * NFREQ --> X = 180 / NFREQ
+ for (int i=0; i<(NSAMPLES+2); i++) {
+//   fullpulse(i) = pulseShapeTemplate[i];
+  fullpulse(i + int( IDSTART / NFREQ )) = pulseShapeTemplate[i];
+//   fullpulse(i + int(180/NFREQ)) = pulseShapeTemplate[i];
+  //   fullpulse(i + NSAMPLES/2 + int(2 * 25 /NFREQ) ) = pulseShapeTemplate[i];
+  std::cout << " i + int(180/NFREQ) = " << i << " + " << int(180/NFREQ) << " = " << i + int(180/NFREQ) << " --> " << pulseShapeTemplate[i] << std::endl;
+ }
+ 
+ 
+//  for (int i=0; i<(NSAMPLES+5); i++) fullpulse(i+(NSAMPLES-3)) = pulseShapeTemplate[i];
+//  for (int i=0; i<(NSAMPLES+2); i++) fullpulse(i+(NSAMPLES-3)) = pulseShapeTemplate[i];
+//  for (int i=0; i<(NSAMPLES+2); i++) fullpulse(i+(NSAMPLES-3)) = pulseShapeTemplate[i];
+ 
  
  //---- correlation
  for (int i=0; i<NSAMPLES; ++i) {
@@ -112,6 +150,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
   }
  }
  
+ std::cout << " noise ready " << std::endl;
  
  //----  collision every 25 ns -> this is fixed number
  //----                       number of sampls * frequence in ns / 25 ns
@@ -201,6 +240,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  //---- create the multifit
  PulseChiSqSNNLS pulsefunc;
  pulsefunc.setNSAMPLES(NSAMPLES);
+ pulsefunc.setNFREQ(NFREQ);
  pulsefunc.Init(); //---- initialization, needed
  
  fout->cd();
@@ -263,7 +303,12 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
   for (unsigned int ipulse=0; ipulse<pulsefunc.BXs()->rows(); ++ipulse) {
    if (status) {
 //     std::cout << " ip = " << ipulse << " --> " << int(pulsefunc.BXs()->coeff(ipulse)) << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
-    samplesReco[ int(pulsefunc.BXs()->coeff(ipulse)) + 5] = (*(pulsefunc.X()))[ ipulse ];
+//     samplesReco[ int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2 ] = (*(pulsefunc.X()))[ ipulse ];
+    samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
+    // 
+//     ibx * 25./NFREQ - NSAMPLES/2
+//     
+    //     samplesReco[ int(pulsefunc.BXs()->coeff(ipulse)) + 5] = (*(pulsefunc.X()))[ ipulse ];
     //     samplesReco[ int(pulsefunc.BXs().coeff(ipulse)) + 5] = pulsefunc.X()[ int(pulsefunc.BXs().coeff(ipulse)) + 5 ];
     //     samplesReco[ipulse] = pulsefunc.X()[ ipulse ];
     //     samplesReco[ipulse] = pulsefunc.X()[ pulsefunc.BXs().coeff(ipulse) ];

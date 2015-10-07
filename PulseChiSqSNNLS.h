@@ -2,6 +2,7 @@
 #define PulseChiSqSNNLS_h
 
 #include "EigenMatrixTypes.h"
+
 #include <set>
 #include <array>
 

@@ -51,14 +51,36 @@ int main(int argc, char** argv) {
  }
  std::cout << " NFREQ = " << NFREQ << std::endl;
  
+ 
+ //---- number of pile up
+ float nPU = 0;
+ if (argc>=6) {
+  nPU = atof(argv[5]);
+ }
+ std::cout << " nPU = " << nPU << std::endl;
+  
+ 
+ //---- signal amplitude in GeV
+ float signalAmplitude = 10.0;
+ if (argc>=7) {
+  signalAmplitude = atof(argv[6]);
+ }
+ std::cout << " signalAmplitude = " << signalAmplitude << std::endl;
+ 
+ 
+ 
+ 
  std::cout << " Generation of digitized samples " << std::endl;
+ 
  
  TRandom rnd;
   
  
  
- TString filenameOutput = Form("mysample_%d_%d_%d_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ); 
- 
+ TString filenameOutput;
+ if (nPU == 0)  filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude); 
+ else           filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
+  
  Pulse pSh;
  pSh.SetNSAMPLES(NSAMPLES);
  pSh.SetNFREQ(NFREQ);
@@ -110,9 +132,9 @@ int main(int argc, char** argv) {
  // make sure these inputs are what you really want
  
  const TString fileInput       = "data/EmptyFileCRRC43.root";
- const int     nPU             = 0;
+//  const int     nPU             = 0;
  const float   eta             = 0.0;
- const float   signalAmplitude = 10.0;
+//  const float   signalAmplitude = 10.0;
  
  TFile *file = new TFile(fileInput.Data());
  

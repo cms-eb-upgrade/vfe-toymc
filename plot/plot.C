@@ -28,7 +28,9 @@ void plot (std::string nameInputFile = "output.root"){
  
  TLegend* leg = new TLegend(0.1,0.7,0.48,0.9);
  std::vector<double>* samplesReco = new std::vector<double>;
+ double amplitudeTruth;
  tree->SetBranchAddress("samplesReco",             &samplesReco);
+ tree->SetBranchAddress("amplitudeTruth",          &amplitudeTruth);
  tree->GetEntry(0);
  int totBX = samplesReco->size();
  
@@ -36,7 +38,7 @@ void plot (std::string nameInputFile = "output.root"){
   TString nameHisto = Form ("samplesReco_%d", i);
 //   TString nameHistoTitle = Form ("BX %d", i-5);
   TString nameHistoTitle = Form ("BX %d", i);
-  histo[i] = new TH1F (nameHisto.Data(), nameHistoTitle.Data(), 3000, 0, 20);
+  histo[i] = new TH1F (nameHisto.Data(), nameHistoTitle.Data(), 3000, 0, 3*amplitudeTruth);
   
   TString toDraw = Form ("samplesReco[%d] >> %s", i, nameHisto.Data());
   tree->Draw(toDraw.Data());
@@ -59,7 +61,7 @@ void plot (std::string nameInputFile = "output.root"){
  
  TCanvas* ccGood = new TCanvas ("ccGood","",800,600);
  for (int i=0; i<totBX; i++) {
-  if (histo[i]->GetMean() > 5) {
+  if (histo[i]->GetMean() > 0.5*amplitudeTruth) {
    histo[i]->Draw();
    histo[i]->GetXaxis()->SetTitle("Energy [GeV]");
   }

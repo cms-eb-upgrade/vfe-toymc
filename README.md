@@ -32,7 +32,19 @@ e.g.
     ./CreateData.exe    0      300     40    6.25 -->  40 samples sampled every 6.25ns
     ./CreateData.exe    0      300     20   12.5  -->  20 samples sampled every 12.5ns
 
-        
+     ./CreateData.exe    0     100    10     25   
+     ./CreateData.exe    0     100    11     25   
+     ./CreateData.exe    0     100    12     25   
+     ./CreateData.exe    0     100    13     25   
+     ./CreateData.exe    0     100    14     25   
+     ./CreateData.exe    0     100    15     25   
+     ./CreateData.exe    0     100    20     25   
+     ./CreateData.exe    0     100    50     25   
+     ./CreateData.exe    0     100    40    6.25   
+     ./CreateData.exe    0     100    20   12.5   
+     
+     
+     
 
 Analyse data:
 
@@ -60,7 +72,16 @@ To run
     ./Example07.multifit.exe mysample_1000_0_10_25.00.root   output.0.10.25.root      10      25
     ./Example07.multifit.exe mysample_1000_0_20_25.00.root   output.0.20.25.root      20      25
 
-
+    ./Example07.multifit.exe mysample_100_0_10_25.00.root      output.0.10.25.00.root     10      25
+    ./Example07.multifit.exe mysample_100_0_11_25.00.root      output.0.11.25.00.root     11      25
+    ./Example07.multifit.exe mysample_100_0_12_25.00.root      output.0.12.25.00.root     12      25
+    ./Example07.multifit.exe mysample_100_0_13_25.00.root      output.0.13.25.00.root     13      25
+    ./Example07.multifit.exe mysample_100_0_14_25.00.root      output.0.14.25.00.root     14      25
+    ./Example07.multifit.exe mysample_100_0_15_25.00.root      output.0.15.25.00.root     15      25
+    ./Example07.multifit.exe mysample_100_0_20_25.00.root      output.0.20.25.00.root     20      25
+    ./Example07.multifit.exe mysample_100_0_20_12.50.root      output.0.20.12.5.root      20      12.5
+    ./Example07.multifit.exe mysample_100_0_40_6.25.root       output.0.40.6.25.root      40      6.25
+    
     
     
     PS: don't be bothered by the error messages from ROOT at the end of the code run ...
@@ -87,8 +108,23 @@ Look at results:
     r99t plot/plotPulse.C\(\"output.0.40.6.25.root\"\)
     r99t plot/plotPulse.C\(\"output.0.20.25.root\"\)
     r99t plot/plotPulse.C\(\"output.0.20.12.5.root\"\)
-    
+
+    r99t plot/plotPulse.C\(\"output.0.10.25.00.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.11.25.00.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.12.25.00.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.13.25.00.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.14.25.00.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.15.25.00.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.20.25.00.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.20.12.5.root\"\)
+    r99t plot/plotPulse.C\(\"output.0.40.6.25.root\"\)
+
     r99t plot/plotPulseInput.C\(\"mysample_300_0_40_6.25.root\"\)
+
+    r99t plot/plotPulseInput.C\(\"mysample_100_0_10_25.00.root\"\)
+    r99t plot/plotPulseInput.C\(\"mysample_100_0_20_25.00.root\"\)
+    r99t plot/plotPulseInput.C\(\"mysample_100_0_20_12.5.root\"\)
+    r99t plot/plotPulseInput.C\(\"mysample_100_0_40_6.25.root\"\)
 
     
     

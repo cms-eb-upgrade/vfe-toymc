@@ -1,6 +1,6 @@
 //---- plot output of multifit
 
-void plotPulse (std::string nameInputFile = "output.root"){
+void plotPulse (std::string nameInputFile = "output.root", int nEvent = 10){
  
  TFile *file = new TFile(nameInputFile.c_str());
  
@@ -16,7 +16,7 @@ void plotPulse (std::string nameInputFile = "output.root"){
  tree->SetBranchAddress("samplesReco", &samplesReco);
  tree->SetBranchAddress("samples", &samples);
  
- tree->GetEntry(10);
+ tree->GetEntry(nEvent);
  
  TCanvas* ccwaveform = new TCanvas ("ccwaveform","",800,600);
  TGraph *gr = new TGraph();

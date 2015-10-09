@@ -66,11 +66,13 @@ int main(int argc, char** argv) {
  
  int IDSTART = 180;
 //  IDSTART = 180 +  NFREQ * 
- int WFLENGTH = 500;
- 
+ int WFLENGTH = 500*4; //---- step 1/4 ns in waveform
+  
  if (( IDSTART + NSAMPLES * NFREQ ) > 500 ) {
-  WFLENGTH = IDSTART + NSAMPLES * NFREQ + 100;
+  WFLENGTH = (IDSTART + NSAMPLES * NFREQ)*4 + 100;
  }
+ 
+ std::cout << " WFLENGTH = " << WFLENGTH << std::endl;
  
  pSh.SetIDSTART(IDSTART);
  pSh.SetWFLENGTH(WFLENGTH);
@@ -207,8 +209,9 @@ int main(int argc, char** argv) {
   for(int ibx = 0; ibx < nBX; ibx++){
 //    std::cout << " ibx = " << ibx << " :: " << nBX << " BX0 = " << BX0 << std::endl;
    for(int iwf = 0; iwf < nWF; iwf++){
-    double t = (BX0 - ibx) * 25. + iwf - (nWF / 2) + 25.; //----> + 25 or not?
-//     double t = (BX0 - ibx) * 25. + iwf - (nWF / 2); //----> + 25 or not?
+    double t = (BX0 - ibx) * 25. + iwf/4. - (500 / 2) + 25.; //----> + 25 or not?   ---> 500 fixed here!
+//     double t = (BX0 - ibx) * 25. + iwf - (nWF / 2) + 25.; //----> + 25 or not?
+    //     double t = (BX0 - ibx) * 25. + iwf - (nWF / 2); //----> + 25 or not?
     
 //     if (t<1000) std::cout << " ---> t = " << t << " iwf = " << iwf << " BX0 = " << BX0 << " ibx = " << ibx << " energyPU.size() = " << energyPU.size() << " energyPU.at(ibx) = " << energyPU.at(ibx) ;
     double temp = waveform.at(iwf);
@@ -228,8 +231,10 @@ int main(int argc, char** argv) {
 
   // add signal to the waveform
   for(int iwf = 0; iwf < nWF; iwf++){
-   waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2) + 25.); //----> + 25 or not?
-//    waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2) ); //----> + 25 or not?
+//    waveform.at(iwf) += signalTruth * pSh.fShape(iwf - 25. * 3);
+//    waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2) + 25.); //----> + 25 or not?
+   waveform.at(iwf) += signalTruth * pSh.fShape(iwf/4. - (500 / 2) + 25.); //----> + 25 or not?  ---> 500 fixed here !!!
+   //    waveform.at(iwf) += signalTruth * pSh.fShape(iwf - (nWF / 2) ); //----> + 25 or not?
   }
 //   std::cout << " done " << std::endl;
   
@@ -261,7 +266,8 @@ int main(int argc, char** argv) {
   
   // add signal (that includes already the pileup!)
   for(int i=0; i<NSAMPLES; ++i){
-   int index = IDSTART + int(i * NFREQ) - shift; //---- time shift "-" on function
+//    int index = IDSTART + int(i * NFREQ) - shift; //---- time shift "-" on function
+   int index = 4*(IDSTART + i * NFREQ - shift); //---- time shift "-" on function
 //    std::cout << " index = " << index << std::endl;
    samples.at(i)   += waveform.at(index);
   }    

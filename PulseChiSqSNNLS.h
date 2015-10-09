@@ -17,6 +17,7 @@ typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> SampleMatrix;
 typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> FullSampleMatrix;
 typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> PulseMatrix;
 typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> SamplePulseMatrix;
+// typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic, 0, 100, 100> SamplePulseMatrix;
 // typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,0,Eigen::Dynamic,Eigen::Dynamic> PulseMatrix;
 // typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,0,Eigen::Dynamic,Eigen::Dynamic> SamplePulseMatrix;
 typedef Eigen::LLT<SampleMatrix> SampleDecompLLT;
@@ -52,6 +53,8 @@ class PulseChiSqSNNLS {
    void disableErrorCalculation() { _computeErrors = false; }
    
    void setNSAMPLES( int NSAMPLES ) { _NSAMPLES = NSAMPLES; }
+   void setNFREQ   ( float NFREQ )  { _NFREQ = NFREQ; }
+   
    
    void Init();
    
@@ -80,7 +83,7 @@ protected:
    unsigned int _nP;
  
    int _NSAMPLES;
-    
+   float _NFREQ;
     
     
 //     typedef Eigen::Matrix<double,NSAMPLES,1> SampleVector;

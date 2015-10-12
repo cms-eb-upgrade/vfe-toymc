@@ -58,7 +58,9 @@ e.g.
      ./CreateData.exe    0     100    10     25     20     50
      ./CreateData.exe    0     100    10     25     20     100
      
-     
+     ./CreateData.exe    0     100    45      5      0     10
+     ./CreateData.exe    0     100    50      5      0     10
+
      
 
 Analyse data:
@@ -99,7 +101,9 @@ To run
     
     ./Example07.multifit.exe mysample_100_0_10_25.00_20.00.root      output.0.10.25.00.20.00.root     10      25
     
-    
+    ./Example07.multifit.exe mysample_100_0_45_5.00_10.00.root      output.root         45      5
+    ./Example07.multifit.exe mysample_100_0_50_5.00_10.00.root      output.root         50      5
+
     
     ./Example07.multifit.exe mysample_100_0_40_6.25_0.10_20.00.root       output.0.40.6.25.20.00.0.1GeV.root        40      6.25
     ./Example07.multifit.exe mysample_100_0_40_6.25_0.50_20.00.root       output.0.40.6.25.20.00.0.5GeV.root        40      6.25
@@ -193,6 +197,8 @@ Look at results:
     r99t plot/plotPulse.C\(\"output.0.10.25.00.20.00.50GeV.root\"\)
     r99t plot/plotPulse.C\(\"output.0.10.25.00.20.00.100GeV.root\"\)
         
+    r99t plot/plotPulse.C\(\"output.root\"\)
+    
     
     r99t plot/plotPulseInput.C\(\"mysample_300_0_40_6.25.root\"\)
 

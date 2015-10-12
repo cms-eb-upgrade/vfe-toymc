@@ -174,7 +174,18 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
 //  int activeBXs[] = { -5, -1,  0,  1 };
  int activeBXs[500];
  for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
-  activeBXs[ibx] = ibx * 25./NFREQ - NSAMPLES/2;
+
+  activeBXs[ibx] = ibx * 25./NFREQ - 3 * 25 / NFREQ;
+  
+//   if (NSAMPLES%2) {
+//    //---- odd
+//    activeBXs[ibx] = ibx * 25./NFREQ - (NSAMPLES+1)/2;
+//   }
+//   else {
+//    //---- even
+//   activeBXs[ibx] = ibx * 25./NFREQ - NSAMPLES/2;
+//   }
+//   activeBXs[ibx] = ibx * 25./NFREQ - NSAMPLES/2;
   std::cout << " activeBXs[" << ibx << "] = " << activeBXs[ibx] << std::endl;
  }
  

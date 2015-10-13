@@ -201,6 +201,11 @@ Look at results:
     r99t plot/plotPulse.C\(\"output.0.10.25.00.20.00.50GeV.root\"\)
     r99t plot/plotPulse.C\(\"output.0.10.25.00.20.00.100GeV.root\"\)
         
+        
+    r99t plot/plotPulse.C\(\"output.0.15.25.00.20.00.10GeV.root\"\)
+    r99t plot/plotPulseInput.C\(\"mysample_100_0_15_25.00_10.00_20.00.root\"\)
+        
+        
     r99t plot/plotPulse.C\(\"output.root\"\)
     
     

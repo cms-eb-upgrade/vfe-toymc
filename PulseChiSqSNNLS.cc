@@ -86,9 +86,15 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
     int bx = _bxs->coeff(ipulse);
 //     std::cout << " PulseChiSqSNNLS::DoFit::bx = " << bx << std::endl;
     
+//     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
+//         int offset = 3 * int(25 /_NFREQ) - bx;
+        int offset = _NSAMPLES - 5 * int(25 /_NFREQ) - bx;
+        
     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
-    int offset = 3 * int(25 /_NFREQ) - bx;
-//     int offset = (_NSAMPLES/2 - int(1*25 /_NFREQ)) - bx;
+    
+//     int offset = - bx;
+    //     int offset = 3 * int(25 /_NFREQ);
+    //     int offset = (_NSAMPLES/2 - int(1*25 /_NFREQ)) - bx;
     
     
 //     int firstsamplet = std::max(0,bx + 3);
@@ -97,7 +103,7 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
 //     int offset =  _NSAMPLES/2 + int(2 * 25 /_NFREQ) - 3 - bx;
 //     int offset = (_NSAMPLES-3)-3-bx;
     
-//     std::cout << " firstsamplet+offset= " << firstsamplet+offset << " = " << firstsamplet << " + " << offset << std::endl; 
+//     std::cout << " ipulse = " << ipulse << " nsample = " << nsample << " nsamplepulse = " <<  nsample-firstsamplet << " firstsamplet+offset= " << firstsamplet+offset << " = " << firstsamplet << " + " << offset << " (= " << 3 * int(25 /_NFREQ) << " - " << bx << " )" << std::endl; 
     
     const unsigned int nsamplepulse = nsample-firstsamplet;
     _pulsemat->col(ipulse).segment(firstsamplet,nsamplepulse) = fullpulse.segment(firstsamplet+offset,nsamplepulse);
@@ -105,6 +111,8 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
 
   //do the actual fit
   if (_debug) std::cout << " PulseChiSqSNNLS::DoFit::Minimize " << std::endl;
+  
+//   std::cout << " PulseChiSqSNNLS::DoFit::Minimize " << std::endl;
   bool status = Minimize(samplecor,pederr,fullpulsecov);
   (*_ampvecmin) = (*_ampvec);
   (*_bxsmin) = (*_bxs);
@@ -155,6 +163,7 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
   
   //two point interpolation for upper uncertainty when amplitude is away from boundary
   double xplus100 = x0 + approxerr;
+  std::cout << " >>>>       xplus100 = " << xplus100 << std::endl;
   _ampvec->coeffRef(ipulseintime) = xplus100;
   if (_debug) std::cout << " samples = " << samples << std::endl;
   if (_debug) std::cout << "  _ampvec->coeff(ipulseintime)*pulseintime = " <<  _ampvec->coeff(ipulseintime)*pulseintime << std::endl;
@@ -199,7 +208,7 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
 
 bool PulseChiSqSNNLS::Minimize(const SampleMatrix &samplecor, double pederr, const FullSampleMatrix &fullpulsecov) {
 
-  
+//   std::cout << " :: PulseChiSqSNNLS::Minimize " << std::endl;
   const int maxiter = 50;
   int iter = 0;
   bool status = false;
@@ -236,20 +245,29 @@ bool PulseChiSqSNNLS::Minimize(const SampleMatrix &samplecor, double pederr, con
 
 bool PulseChiSqSNNLS::updateCov(const SampleMatrix &samplecor, double pederr, const FullSampleMatrix &fullpulsecov) {
  
-//  std::cout << " PulseChiSqSNNLS::updateCov " << std::endl;
+//  std::cout << " :: PulseChiSqSNNLS::updateCov " << std::endl;
  
 //   const unsigned int nsample = SampleVector::RowsAtCompileTime;
   const unsigned int nsample = _NSAMPLES;
   const unsigned int npulse = _bxs->rows();
   
   _invcov->triangularView<Eigen::Lower>() = (pederr*pederr)*samplecor;
+//   std::cout << " _invcov->triangularView<Eigen::Lower>() done " << std::endl;
+  bool atleastone = false;
   
   for (unsigned int ipulse=0; ipulse<npulse; ++ipulse) {
+//    std::cout << " ipulse = " << ipulse << "::" << npulse << " _ampvec->coeff(ipulse) = " << _ampvec->coeff(ipulse)<< std::endl;
+   
     if (_ampvec->coeff(ipulse)==0.) continue;
+    
+    atleastone = true;
     int bx = _bxs->coeff(ipulse);
 //     int firstsamplet = std::max(0,bx + 3);
     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
-    int offset = 3 * int(25 /_NFREQ) - bx;
+//     int offset = - bx;
+    int offset = _NSAMPLES - 5 * int(25 /_NFREQ) - bx;
+//     int offset = 3 * int(25 /_NFREQ) - bx;
+    //     int offset = 3 * int(25 /_NFREQ);
 //     int offset = (_NSAMPLES/2 - int(1*25 /_NFREQ)) - bx;
     
     //     int offset = 7-3-bx;
@@ -257,14 +275,20 @@ bool PulseChiSqSNNLS::updateCov(const SampleMatrix &samplecor, double pederr, co
     //     int offset =  _NSAMPLES/2 + int(2 * 25 /_NFREQ) - 3 - bx;
     //     int offset = (_NSAMPLES-3)-3-bx;
     
+//     std::cout << " ipulse = " << ipulse << " nsample = " << nsample << " nsamplepulse = " <<  nsample-firstsamplet << " firstsamplet+offset= " << firstsamplet+offset << " = " << firstsamplet << " + " << offset << " (= " << 3 * int(25 /_NFREQ) << " - " << bx << " )" << std::endl; 
+    
     double ampsq = (_ampvec->coeff(ipulse)) * (_ampvec->coeff(ipulse));
     
     const unsigned int nsamplepulse = nsample-firstsamplet;    
     _invcov->block(firstsamplet,firstsamplet,nsamplepulse,nsamplepulse).triangularView<Eigen::Lower>() += ampsq*fullpulsecov.block(firstsamplet+offset,firstsamplet+offset,nsamplepulse,nsamplepulse);    
   }
   
+//   if (atleastone) _covdecomp->compute(*_invcov);
+
   _covdecomp->compute(*_invcov);
-//   _covdecomp_support->llt().compute(*_invcov);
+  
+//   std::cout << " :: PulseChiSqSNNLS::updateCov (end) " << std::endl; 
+  //   _covdecomp_support->llt().compute(*_invcov);
   
   bool status = true;
   return status;
@@ -302,6 +326,8 @@ bool PulseChiSqSNNLS::NNLS() {
   
  if (_debug) std::cout << " PulseChiSqSNNLS::NNLS " << std::endl;
  
+//   std::cout << " :: PulseChiSqSNNLS::NNLS " << std::endl;
+ 
   const unsigned int npulse = _bxs->rows();
   
 //   std::cout << " _pulsemat  = " << std::endl << (*_pulsemat) << std::endl;
@@ -336,6 +362,9 @@ bool PulseChiSqSNNLS::NNLS() {
   
   if (_debug) std::cout << " PulseChiSqSNNLS::NNLS here " << std::endl;
   
+//   std::cout << " PulseChiSqSNNLS::NNLS here " << std::endl;
+  
+  const int maxiter = 5000;
   
   int iter = 0;
   while (true) {    
@@ -345,6 +374,8 @@ bool PulseChiSqSNNLS::NNLS() {
       
       const unsigned int nActive = npulse - _nP;
       if (_debug) std::cout << " PulseChiSqSNNLS::NNLS nActive = " << nActive << " = " << npulse << " - " << _nP << std::endl;
+      
+//       std::cout << " PulseChiSqSNNLS::NNLS nActive = " << nActive << " = " << npulse << " - " << _nP << std::endl;
       
 //    wvec.tail(nActive) = aTbvec.tail(nActive) - (aTamat.selfadjointView<Eigen::Lower>()*_ampvec).tail(nActive);       
       wvec.tail(nActive) = aTbvec.tail(nActive) - (aTamat.selfadjointView<Eigen::Lower>() * (*_ampvec)).tail(nActive);       
@@ -370,6 +401,7 @@ bool PulseChiSqSNNLS::NNLS() {
       ++_nP;
     }
 
+//     std::cout << " PulseChiSqSNNLS::NNLS next one ..." << std::endl;
     
     while (true) {
       //printf("iter in, idxsP = %i\n",int(_idxsP.size()));
@@ -416,7 +448,11 @@ bool PulseChiSqSNNLS::NNLS() {
       --_nP;
       
     }
+    
+//     std::cout << " PulseChiSqSNNLS::NNLS iter = " << iter << std::endl;
     ++iter;
+    if (iter > maxiter) break;
+
   }
   
   return true;

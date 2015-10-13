@@ -327,8 +327,10 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
    if (status) {
 //     std::cout << " ip = " << ipulse << " --> " << int(pulsefunc.BXs()->coeff(ipulse)) << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
 //     std::cout << " ip = " << ipulse << " --> " <<  (int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2) * NFREQ/25  << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
+//     std::cout << " ip = " << ipulse << " --> " <<  (int(pulsefunc.BXs()->coeff(ipulse)) + 3) * NFREQ/25  << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
     //     samplesReco[ int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2 ] = (*(pulsefunc.X()))[ ipulse ];
-    samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
+//     samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
+    samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + 3 ) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
     // 
 //     ibx * 25./NFREQ - NSAMPLES/2
 //     

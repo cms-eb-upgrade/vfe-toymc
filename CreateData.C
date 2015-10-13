@@ -183,7 +183,7 @@ int main(int argc, char** argv) {
  treeOut->Branch("nBX",         &nBX,         "nBX/I");
  treeOut->Branch("nWF",         &nWF,         "nWF/I");
  treeOut->Branch("nMinBias",    &nMinBias );
- treeOut->Branch("energyPU",    &energyPU,    "energyPU");
+ treeOut->Branch("energyPU",    &energyPU);
  treeOut->Branch("waveform",    &waveform );
  treeOut->Branch("signalTruth", &signalTruth, "signalTruth/D");
  

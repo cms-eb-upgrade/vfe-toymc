@@ -58,6 +58,8 @@ e.g.
      ./CreateData.exe    0     100    10     25     20     50
      ./CreateData.exe    0     100    10     25     20     100
      
+     ./CreateData.exe    0     100    15     25     20     10
+     
      ./CreateData.exe    0     100    45      5      0     10
      ./CreateData.exe    0     100    50      5      0     10
 
@@ -118,7 +120,9 @@ To run
     ./Example07.multifit.exe mysample_100_0_10_25.00_50.00_20.00.root     output.0.10.25.00.20.00.50GeV.root      10      25
     ./Example07.multifit.exe mysample_100_0_10_25.00_100.00_20.00.root    output.0.10.25.00.20.00.100GeV.root     10      25
     
-    
+    ./Example07.multifit.exe mysample_100_0_15_25.00_10.00_20.00.root     output.0.15.25.00.20.00.10GeV.root      15      25
+
+        
     PS: don't be bothered by the error messages from ROOT at the end of the code run ...
     
 Look at results:

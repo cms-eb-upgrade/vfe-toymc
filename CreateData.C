@@ -78,9 +78,10 @@ int main(int argc, char** argv) {
  
  
  TString filenameOutput;
- if (nPU == 0)  filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude); 
- else           filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
-  
+//  if (nPU == 0)  filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude); 
+//  else           filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
+ filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
+ 
  Pulse pSh;
  pSh.SetNSAMPLES(NSAMPLES);
  pSh.SetNFREQ(NFREQ);

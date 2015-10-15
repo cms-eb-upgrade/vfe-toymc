@@ -88,13 +88,16 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
     
 //     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
 //         int offset = 3 * int(25 /_NFREQ) - bx;
-        int offset = _NSAMPLES - 5 * int(25 /_NFREQ) - bx;
-        
+      
+    int offset = _NSAMPLES - 5 * int(25 /_NFREQ) - bx;    
     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
+
+//     int offset = _NSAMPLES - (7-2) * int(25 /_NFREQ) - bx;    
+//     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
     
 //     int offset = - bx;
-    //     int offset = 3 * int(25 /_NFREQ);
-    //     int offset = (_NSAMPLES/2 - int(1*25 /_NFREQ)) - bx;
+//     //     int offset = 3 * int(25 /_NFREQ);
+//     //     int offset = (_NSAMPLES/2 - int(1*25 /_NFREQ)) - bx;
     
     
 //     int firstsamplet = std::max(0,bx + 3);
@@ -263,10 +266,17 @@ bool PulseChiSqSNNLS::updateCov(const SampleMatrix &samplecor, double pederr, co
     atleastone = true;
     int bx = _bxs->coeff(ipulse);
 //     int firstsamplet = std::max(0,bx + 3);
-    int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
 //     int offset = - bx;
+
     int offset = _NSAMPLES - 5 * int(25 /_NFREQ) - bx;
-//     int offset = 3 * int(25 /_NFREQ) - bx;
+    int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
+
+//     int offset = _NSAMPLES - (7-2) * int(25 /_NFREQ) - bx;    
+//     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
+    
+    
+    
+    //     int offset = 3 * int(25 /_NFREQ) - bx;
     //     int offset = 3 * int(25 /_NFREQ);
 //     int offset = (_NSAMPLES/2 - int(1*25 /_NFREQ)) - bx;
     

@@ -167,15 +167,19 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  if ( round((NSAMPLES * NFREQ) / 25.) != (NSAMPLES * NFREQ) / 25 ) {
   std::cout << " Attention please! How do you think multifit can fit a pulse in the middle between collisions!?!?!?!?" << std::endl;
  }
- int totalNumberOfBxActive = int(NSAMPLES * NFREQ) / 25;
+ 
+ int totalNumberOfBxActive = int(NSAMPLES * NFREQ) / 25; 
+//  int totalNumberOfBxActive = int(NSAMPLES * NFREQ) / 25 - 1;
  std::cout << " totalNumberOfBxActive = " << totalNumberOfBxActive << std::endl;
  
 //  totalNumberOfBxActive = 4;
 //  int activeBXs[] = { -5, -1,  0,  1 };
- int activeBXs[500];
+ std::vector<int> activeBXs;
  for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
 
-  activeBXs[ibx] = ibx * 25./NFREQ - 3 * 25 / NFREQ;
+  activeBXs.push_back( ibx * 25./NFREQ - 5 * 25 / NFREQ ); //----> -5 BX are active w.r.t. 0 BX
+  
+//   activeBXs.push_back( ibx * 25./NFREQ - 3 * 25 / NFREQ );
   
 //   if (NSAMPLES%2) {
 //    //---- odd
@@ -229,6 +233,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  TTree *tree = (TTree*) file2->Get("Samples");
  tree->SetBranchAddress("amplitudeTruth",      &amplitudeTruth);
  tree->SetBranchAddress("samples",             &samples);
+ 
  int nentries = tree->GetEntries();
  
  std::cout << " nentries = " << nentries << std::endl;
@@ -252,6 +257,7 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  int ipulseintime = 0;
  newtree->Branch("samplesReco",   &samplesReco);
  newtree->Branch("ipulseintime",  ipulseintime,  "ipulseintime/I");
+ newtree->Branch("activeBXs",     &activeBXs);
  
  for (unsigned int ibx=0; ibx<totalNumberOfBxActive; ++ibx) {
   samplesReco.push_back(0.);
@@ -327,10 +333,16 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
    if (status) {
 //     std::cout << " ip = " << ipulse << " --> " << int(pulsefunc.BXs()->coeff(ipulse)) << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
 //     std::cout << " ip = " << ipulse << " --> " <<  (int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2) * NFREQ/25  << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
+
 //     std::cout << " ip = " << ipulse << " --> " <<  (int(pulsefunc.BXs()->coeff(ipulse)) + 3) * NFREQ/25  << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
+//     std::cout << " ip = " << ipulse << " --> " <<  (int(pulsefunc.BXs()->coeff(ipulse)) + 5) * NFREQ/25  << " ----> " << (*(pulsefunc.X()))[ ipulse ] << std::endl;
+
     //     samplesReco[ int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2 ] = (*(pulsefunc.X()))[ ipulse ];
 //     samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + NSAMPLES / 2) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
-    samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + 3 ) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
+
+//     samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + 3 ) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
+    samplesReco[ (int(pulsefunc.BXs()->coeff(ipulse)) + 5 ) * NFREQ/25 ] = (*(pulsefunc.X()))[ ipulse ];
+    
     // 
 //     ibx * 25./NFREQ - NSAMPLES/2
 //     
@@ -363,9 +375,9 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  
  //---- save pulses
- fout->cd();
- fout->mkdir("samples");
- fout->cd("samples"); 
+//  fout->cd();
+//  fout->mkdir("samples");
+//  fout->cd("samples"); 
 //  for (int ievt = 0; ievt < v_pulses.size(); ievt++) {
 //   v_pulses.at(ievt)->Write();
 //  }
@@ -380,9 +392,10 @@ void run(std::string inputFile, std::string outFile, int NSAMPLES, float NFREQ) 
  
  fout->cd();
  std::cout << " done (1) " << std::endl;
- newtree->AutoSave();
- std::cout << " done (2) " << std::endl;
  h01->Write();
+ std::cout << " done (2) " << std::endl;
+//  newtree->AutoSave();
+ newtree->Write();
  std::cout << " done (3) " << std::endl;
  fout->Close();
  

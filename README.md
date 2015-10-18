@@ -117,15 +117,15 @@ Returns energy distribution histograms for each input file and a histogram ploti
 [NSAMPLE, NFREQ, Amplitude, Pileup]
 Examples:
 - With one root file
->   $ python plot_energy.py output_file1.root
+-   $ python plot_energy.py output_file1.root
 - With many root files (you can pass it as many as you want)
->   $ python plot_energy.py output_file1.root output_file2.root output_file2.root
+-   $ python plot_energy.py output_file1.root output_file2.root output_file2.root
 - With many root files, using an asterisk to select them
->   $ python plot_energy.py "output_file*.root"
->   $ python plot_energy.py "output_file*.root" new_data1.root
->   $ python plot_energy.py "output_file*.root" "new_data*.root"
+-   $ python plot_energy.py "output_file*.root"
+-   $ python plot_energy.py "output_file*.root" new_data1.root
+-   $ python plot_energy.py "output_file*.root" "new_data*.root"
 - A useful selection where all parameters are fixed except one
->   $ python plot_energy.py "output_10_25.00_10.00_*.root"
->   $ python plot_energy.py "output_10_25.00_*_20.00.root"
+-   $ python plot_energy.py "output_10_25.00_10.00_*.root"
+-   $ python plot_energy.py "output_10_25.00_*_20.00.root"
     
 IMPORTANT: When selecting files using the wildcard '*', the filename must be surrounded with quotes "" as a string, to protect the wildcard from being interpreted by the shell. When passing files one at a time with their full names, using quotes or not doesn't matter.

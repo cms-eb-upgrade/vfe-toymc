@@ -80,15 +80,17 @@ int main(int argc, char** argv) {
  TString filenameOutput;
 //  if (nPU == 0)  filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude); 
 //  else           filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
- filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
+//  filenameOutput = Form("mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
+ filenameOutput = Form("input/mysample_%d_%d_%d_%.2f_%.2f_%.2f.root", nEventsTotal, shift, NSAMPLES, NFREQ, signalAmplitude, nPU); 
  
  Pulse pSh;
  pSh.SetNSAMPLES(NSAMPLES);
  pSh.SetNFREQ(NFREQ);
  
  
- int IDSTART = 180;
-//  IDSTART = 180 +  NFREQ * 
+//  int IDSTART = 180;
+ int IDSTART = 7*25;
+ //  IDSTART = 180 +  NFREQ * 
  int WFLENGTH = 500*4; //---- step 1/4 ns in waveform
   
  if (( IDSTART + NSAMPLES * NFREQ ) > 500 ) {
@@ -168,6 +170,7 @@ int main(int argc, char** argv) {
  treeOut->Branch("nFreq",             &nFreq,               "nFreq/F");
  treeOut->Branch("amplitudeTruth",    &amplitudeTruth,      "amplitudeTruth/D");
  treeOut->Branch("samples",           &samples );
+ treeOut->Branch("nPU",         &nPU,         "nPU/F");
  
   
  

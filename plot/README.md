@@ -9,7 +9,11 @@ scan.py
 
     python plot/scan.py output_100_0_1*_25.00_10.00_0.00.root
 
+    python plot/scan.py outputfit/output_*.root
 
+    
+    python plot/plotResult.py
+    
     
 plot_energy.py
 ====

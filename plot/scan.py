@@ -7,12 +7,14 @@ import re
 
 def scan(files):
     # Output file
-    out_file = TFile("scan_plots.root", "Recreate")
+    #out_file = TFile("scan_plots.root", "Recreate")
     # The number of bins to use in the histogram
     BINS = 200
 
     # Histograms for standard deviations vs. vairous values
     hist = TH1F("hist","", BINS, -1, 1)
+
+    outputfile = open("results.txt", 'a')
 
     # Accessing each file and making the histograms
     for i, f in enumerate(files):
@@ -57,8 +59,17 @@ def scan(files):
         print "  ", standard_dev_gev,
         print "  ", standard_dev_gev_err
 
+        for inputs in stats:
+          outputfile.write(" " + str(inputs))
+        outputfile.write(" " + str(bias_gev))
+        outputfile.write(" " + str(standard_dev_bias))
+        outputfile.write(" " + str(standard_dev_bias_err))
+        outputfile.write(" " + str(standard_dev_gev))
+        outputfile.write(" " + str(standard_dev_gev_err))
+        outputfile.write("\n")
 
-    out_file.Close()
+
+    outputfile.close()
     in_file.Close()
 
 if __name__ == "__main__":

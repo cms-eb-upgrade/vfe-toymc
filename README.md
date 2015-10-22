@@ -64,6 +64,14 @@ e.g.
      ./CreateData.exe    0     100    50      5      0     10
 
      
+     for i in `seq 1 10`;
+        do
+                let npul=$i+10
+                echo "./CreateData.exe    0     100    $npul     25     20     10"
+        done 
+        
+    python createAll.py 
+     
 
 Analyse data:
 
@@ -106,6 +114,8 @@ To run
     ./Example07.multifit.exe mysample_100_0_45_5.00_10.00.root      output.root         45      5
     ./Example07.multifit.exe mysample_100_0_50_5.00_10.00.root      output.root         50      5
 
+    ./Example07.multifit.exe mysample_100_0_50_5.00_10.00_0.00.root      output.root         50      5
+    
     
     ./Example07.multifit.exe mysample_100_0_40_6.25_0.10_20.00.root       output.0.40.6.25.20.00.0.1GeV.root        40      6.25
     ./Example07.multifit.exe mysample_100_0_40_6.25_0.50_20.00.root       output.0.40.6.25.20.00.0.5GeV.root        40      6.25
@@ -122,7 +132,19 @@ To run
     
     ./Example07.multifit.exe mysample_100_0_15_25.00_10.00_20.00.root     output.0.15.25.00.20.00.10GeV.root      15      25
 
-        
+
+    
+    ./Example07.multifit.exe mysample_100_0_10_25.00_10.00_0.00.root      output_100_0_10_25.00_10.00_0.00.root       10      25
+    ./Example07.multifit.exe mysample_100_0_11_25.00_10.00_0.00.root      output_100_0_11_25.00_10.00_0.00.root       11      25
+    ./Example07.multifit.exe mysample_100_0_12_25.00_10.00_0.00.root      output_100_0_12_25.00_10.00_0.00.root       12      25
+    ./Example07.multifit.exe mysample_100_0_13_25.00_10.00_0.00.root      output_100_0_13_25.00_10.00_0.00.root       13      25
+    ./Example07.multifit.exe mysample_100_0_14_25.00_10.00_0.00.root      output_100_0_14_25.00_10.00_0.00.root       14      25
+    ./Example07.multifit.exe mysample_100_0_15_25.00_10.00_0.00.root      output_100_0_15_25.00_10.00_0.00.root       15      25
+
+    
+    python fitAll.py
+    python fitAll.py  0
+    
     PS: don't be bothered by the error messages from ROOT at the end of the code run ...
     
 Look at results:

@@ -74,13 +74,16 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
   _pulsemat->resize(nsample,npulse);  _pulsemat->setZero();
 //   std::cout << " PulseChiSqSNNLS::DoFit::here 4 " << std::endl;
   
-  (*_pulsemat) = SamplePulseMatrix::Zero(nsample,npulse);
-  (*_ampvec) = PulseVector::Zero(npulse);
-  (*_errvec) = PulseVector::Zero(npulse);  
+//   (*_pulsemat) = SamplePulseMatrix::Zero(nsample,npulse);
+//   (*_ampvec) = PulseVector::Zero(npulse);
+  _errvec->resize(npulse,1);          _errvec->setZero();
+//   (*_errvec) = PulseVector::Zero(npulse);  
   
   _nP = 0;
   _chisq = 0.;
 
+//   std::cout << " ---- " << std::endl;
+  
   //initialize pulse template matrix
   for (unsigned int ipulse=0; ipulse<npulse; ++ipulse) {
     int bx = _bxs->coeff(ipulse);
@@ -89,9 +92,15 @@ bool PulseChiSqSNNLS::DoFit(const SampleVector &samples, const SampleMatrix &sam
 //     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
 //         int offset = 3 * int(25 /_NFREQ) - bx;
       
-    int offset = _NSAMPLES - 5 * int(25 /_NFREQ) - bx;    
-    int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
-
+    //--- YES
+//     int offset = _NSAMPLES - 5 * int(25. /_NFREQ) - bx;    
+//     int firstsamplet = std::max(0,bx + 3 * int(25. /_NFREQ));
+    
+    int offset = 4 * int(25. /_NFREQ) - bx;    
+    int firstsamplet = std::max(0,bx + 3 * int(25. /_NFREQ));
+    
+//     std::cout << " offset = " << offset << " firstsamplet = " << firstsamplet << " bx = " << bx << std::endl;
+    
 //     int offset = _NSAMPLES - (7-2) * int(25 /_NFREQ) - bx;    
 //     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
     
@@ -268,8 +277,14 @@ bool PulseChiSqSNNLS::updateCov(const SampleMatrix &samplecor, double pederr, co
 //     int firstsamplet = std::max(0,bx + 3);
 //     int offset = - bx;
 
-    int offset = _NSAMPLES - 5 * int(25 /_NFREQ) - bx;
-    int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));
+    //--- YES
+    //     int offset = _NSAMPLES - 5 * int(25. /_NFREQ) - bx;    
+    //     int firstsamplet = std::max(0,bx + 3 * int(25. /_NFREQ));
+    
+    int offset = 4 * int(25. /_NFREQ) - bx;    
+    int firstsamplet = std::max(0,bx + 3 * int(25. /_NFREQ));
+    
+    
 
 //     int offset = _NSAMPLES - (7-2) * int(25 /_NFREQ) - bx;    
 //     int firstsamplet = std::max(0,bx + 3 * int(25 /_NFREQ));

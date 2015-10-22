@@ -11,14 +11,14 @@ typedef Eigen::Matrix<double,Eigen::Dynamic,1> SampleVector;
 typedef Eigen::Matrix<double,Eigen::Dynamic,1> FullSampleVector;
 // typedef Eigen::Matrix<double,Eigen::Dynamic,1> PulseVector;
 // typedef Eigen::Matrix<char,  Eigen::Dynamic,1> BXVector;
-typedef Eigen::Matrix<double,Eigen::Dynamic,1,0,100,1> PulseVector;
-typedef Eigen::Matrix<char,  Eigen::Dynamic,1,0,100,1> BXVector;
+typedef Eigen::Matrix<double,Eigen::Dynamic,1,0,110,1> PulseVector;
+typedef Eigen::Matrix<char,  Eigen::Dynamic,1,0,110,1> BXVector;
 typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> SampleMatrix;
 typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> FullSampleMatrix;
 // typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> PulseMatrix;
 // typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> SamplePulseMatrix;
-typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,0, 100, 100> PulseMatrix;
-typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,0, 100, 100> SamplePulseMatrix;
+typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,0, 110, 110> PulseMatrix;
+typedef Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,0, 110, 110> SamplePulseMatrix;
 typedef Eigen::LLT<SampleMatrix> SampleDecompLLT;
 
 typedef BXVector::Index Index;

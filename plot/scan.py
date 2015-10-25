@@ -1,6 +1,6 @@
 from ROOT import *
 from glob import glob
-from math import sqrt
+from math import sqrt, log
 from sys import argv
 import re
 
@@ -9,18 +9,21 @@ def scan(files):
     # Output file
     #out_file = TFile("scan_plots.root", "Recreate")
     # The number of bins to use in the histogram
-    BINS = 200
+    #BINS = 200
+    BINS = 10000
 
     # Histograms for standard deviations vs. vairous values
-    hist = TH1F("hist","", BINS, -1, 1)
+    hist = TH1F("hist","", BINS, -0.1, 0.1)
 
     outputfile = open("results.txt", 'a')
+
+    outrootfile = TFile("outfit.root", "RECREATE")
 
     # Accessing each file and making the histograms
     for i, f in enumerate(files):
     
         # Accessing the file
-        #print "File", i+1, ":", f
+        print "File", i+1, ":", f
         in_file = TFile(f, "Read")
         tree = in_file.Get("RecoAndSim")
         nentries = tree.GetEntries()
@@ -32,7 +35,8 @@ def scan(files):
 
         hist.Reset()
         
-        hist_delta_energy = TH1F("hist_delta_energy","", BINS, -tree.amplitudeTruth/10 , tree.amplitudeTruth/10)
+        #hist_delta_energy = TH1F("hist_delta_energy","", BINS, -tree.amplitudeTruth/10 , tree.amplitudeTruth/10)
+        hist_delta_energy = TH1F("hist_delta_energy","", BINS, -log(tree.amplitudeTruth+1)/tree.amplitudeTruth*2 , log(tree.amplitudeTruth+1)/tree.amplitudeTruth*2)
 
 
         # Filling the energy distribution histograms
@@ -68,9 +72,14 @@ def scan(files):
         outputfile.write(" " + str(standard_dev_gev_err))
         outputfile.write("\n")
 
+        outrootfile.cd()
+        hist.Write()
+        hist_delta_energy.Write()
 
     outputfile.close()
     in_file.Close()
+    outrootfile.Close()
+    
 
 if __name__ == "__main__":
     

@@ -36,14 +36,23 @@ if __name__ == '__main__':
     ##AMPLITUDES = [10]
     #AMPLITUDES = [10, 100]
 
-    NTOYS = 100
+    #NTOYS = 100
+    #NFREQS = [6.25, 12.5, 25]
+    ##NSAMPLES = [10, 20, 40, 80, 160]
+    #NSAMPLES = [10, 11, 12, 13, 14, 15, 20, 30, 40, 50, 60, 70, 80, 90]
+    #NPUS = [0, 20, 40, 140]
+    ##AMPLITUDES = [10]
+    #AMPLITUDES = [1, 10, 100]
+   
+    NTOYS = 1000
     NFREQS = [6.25, 12.5, 25]
-    #NSAMPLES = [10, 20, 40, 80, 160]
-    NSAMPLES = [10, 11, 12, 13, 14, 15, 20, 30, 40, 50, 60, 70, 80, 90]
+    NSAMPLES = [10, 15, 20, 40, 50, 60]
     NPUS = [0, 20, 40, 140]
     #AMPLITUDES = [10]
     AMPLITUDES = [1, 10, 100]
-   
+    
+
+
 
     for nsample in NSAMPLES:
       for nfreq in NFREQS:

@@ -11,6 +11,7 @@ scan.py
 
     python plot/scan.py outputfit/output_*.root
 
+    python plot/scan.py outputfit/output_1000_*.root
     
     python plot/plotResult.py
     

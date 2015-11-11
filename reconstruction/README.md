@@ -1,115 +1,86 @@
-# vfe-toymc
-Toy MC to study VFE pulse shapes.
+Reconstruction step
+====
+
+Two steps:
+
+    - create data with different pu, nsamples, nfreq, ...
+    - run multifit
+
+In the create step we can decide:
+
+    - nPU : average number of pu (float)
+    - NSAMPLES : number of sampled points out of the pulse
+    - NFREQ: temporary space among points, in ns. nfreq must be defined such that the "in time" bunch crossing is one of it. e.g. 25 ns, 12.5 ns, 6.25 ns, ...
+    - nEventsTotal: number of events to simulate
+    - signalAmplitude: true signal amplitude of the interesting event.
+    - shift: temporal shift of the simulated sampling. Useful to study the dependence on un-tracked temporal shifts of the pulse
+    
+Multifit need to know
+    
+    - NSAMPLES: how many points have been sampled
+    - NFREQ: temporary space among points, in ns
+
+Multifit code will automatically assign the "active bunch crosses", under the assumption that there is a collision every 25 ns.
 
 
-A set of examples for standalone.
-It is a toy Monte Carlo for simulation and reconstruction of pulses.
-All files here are for VFE scenario: CRRC 43ns pulse shaping
-It is defined in Pulse.h
+How to Create data
+====
 
-Example01
----------
+First compile:
 
-Produces a file with information about pulse shape.  The output is a
-root file with TGraph (pulse shape) and 3 parameters to describe the
-tail of the pulse shape.
+    g++ -o CreateData.exe  CreateData.C -std=c++11 `root-config --cflags --glibs`
+    mkdir input
+    
+Then
 
-File data/EmptyFileCRRC43.root was produced with this example. It
-corresponds to CRRC pulse shaper with tau=43ns. This file is a
-starting point. This example is for info only. It does not need to be
-repeated for CRRC 43ns shaper.
+    python createAll.py 
+    python createAll.py 0 -----> to have a dry run, only "cout" and no actual running
+    
+It is an interface to the code
 
-Similar files for other configurations has been produced:
-data/EmptyFileCRRC10.root    CRRC tau=10 ns
-data/EmptyFileCRRC20.root    CRRC tau=20 ns
-data/EmptyFileCRRC30.root    CRRC tau=30 ns
-data/EmptyFileCRRC43.root    CRRC tau=43 ns
-data/EmptyFileCRRC60.root    CRRC tau=60 ns
-data/EmptyFileCRRC90.root    CRRC tau=90 ns
-data/EmptyFileQIE25.root    Charge integration with gate 25 ns
-data/EmptyFileQIE12.root    Charge integration with gate 12 ns
-data/EmptyFileQIE6.root     Charge integration with gate 6 ns
-
-
-
-Example02
----------
-
-Produces waveforms and stores it in a separate file. Each waveform is
-an array of amplitudes (GeV) as a function of time (ns) in 500 ns time
-window. Pileup level and signal amplitude need to be defined in the
-code.
-
-Files
-
-data/waveform_signal_10GeV_pu_0.root 
-data/waveform_signal_10GeV_eta_0.0_pu_140.root
-
-were produced with this example. It is a set of 100 waveforms for
-a signal of 10 GeV and PU=0 and PU=140 respectively.
-
-
-Example03
----------
-
-Plots one waveform created in Example02
-
-
-Example04
----------
-
-Creates DIGIs: samples of amplitude with noise.
-Noise is correlated.
-
-Files
-
-data/samples_signal_10GeV_pu_0.root 
-data/samples_signal_10GeV_eta_0.0_pu_140.root
-
-were created from
-
-data/waveforms_signal_10GeV_pu_0.root 
-data/waveforms_signal_10GeV_eta_0.0_pu_140.root
-
-with average noise of 44 MeV and correlation matrix for CRRC 43ns
+    CreateData.C
+    
+and it will create a lot of files, one for each configuration:
+    
+    NTOYS = 100
+    NFREQS = [6.25, 12.5, 25]
+    NSAMPLES = [10, 11, 12, 13, 14, 15, 20, 30, 40, 50, 60, 70, 80, 90]
+    NPUS = [0, 20, 40, 140]
+    AMPLITUDES = [1, 10, 100]
 
 
 
-Example05
----------
+How to Fit data with multifit
+====
 
-Fit one event with a pulse shape and plot it
-Compare reconstructed amplitude with MC truth.
-Timing is also reconstructed.
-Errors on amplitude and timing are estimated using RMS of histograms
+First compile:
 
+    g++ -o Example07.multifit.exe Example07.multifit.cc PulseChiSqSNNLS.cc -std=c++11 `root-config --cflags --glibs`
+    mkdir outputfit
+    
+Then
 
-Example06
----------
+    python fitAll.py
+    python fitAll.py 0 -----> to have a dry run, only "cout" and no actual running
+    
+It is an interface to the code
+    
+    Example07.multifit.exe
+    
+    
+Plot the results
+====
 
-Multifit reconstruction
-One need to make sure that Eigen is installed
-To compile:
-> g++ -o Example06 Example06.cc PulseChiSqSNNLS.cc -std=c++11 `root-config --cflags --glibs`
-To run
-> ./Example06 
+see the plot folder
 
-
-Example07
----------
-
-Same exercise as in Example05 except errors on amplitude and timing
-are estimated using effective sigma: shortest interval that covers
-68%. The advantages of this approach:
-- no need to use histograms
-- works for non-Gaussian distributions
-
-
-Example08
-----------
-
-Simulation of APD spike energy and timing. Absolute rate is calculated
-as well.  Timing is ToF adjusted and modulo 25ns. Hence spikes from
-earlier BX are accounted for.  Based on CMSSW simulations for Phase2
-ECAL. Represents an average EB channel (no eta dependence of APD spike
-energy/time)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

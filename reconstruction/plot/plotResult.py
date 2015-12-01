@@ -13,7 +13,7 @@ def main():
     gStyle.SetPalette(1)
 
     # Read and split lines from input file
-    input_file = open("results_all.txt", 'r')
+    input_file = open("results.txt", 'r')
     input_lines = input_file.readlines()
     input_list = [l.split() for l in input_lines[2:]]
 
@@ -69,14 +69,14 @@ def main():
     dir_name = "Main_Sampling_Graphs"
     out_file.mkdir(dir_name)
     path = [dir_name, "/"]
-    #main_sampling_files(new_names, path, param_dict, param_names, sigma_dict, out_file)
+    main_sampling_files(new_names, path, param_dict, param_names, sigma_dict, out_file)
 
     # Build all the dependent sigma graphs
     dir_name = "Dependent_Sigma"
     out_file.mkdir(dir_name)
     path = [dir_name, "/"]
-    #dependent_sigma_files(param_names, path, param_dict, param_names, 
-    #                       sigma_dict, out_file)
+    dependent_sigma_files(param_names, path, param_dict, param_names, 
+                           sigma_dict, out_file)
 
     out_file.Close()
 
@@ -181,8 +181,6 @@ def make_graphs(path, canvas_var_val, params, names, sigmas, out_file):
                                     [lines, line_val],
                                     [x_axis, x_val], 
                                     [canvas_var, canvas_var_val]])
-                # The values that sigmas access determines what measure you are 
-                # using. Change these from 3,4 once sigma_eff is updated and in
                 if point in sigmas:
                     print point
                     graph_line.SetPoint(point_num, x_val, sigmas[point][0])
@@ -207,10 +205,10 @@ def make_graphs(path, canvas_var_val, params, names, sigmas, out_file):
         print " X:", x_bins, "Y:", y_bins
 
         # Initialize the graph and legend
-        title  = "#sigma_{Eff} / E vs. " + x_axis + " where " + \
+        title  = "#sigma_{Eff} vs. " + x_axis + " where " + \
                  graph_var + "=" + str(panel_var) + " and " + \
                  canvas_var + "=" + str(canvas_var_val) + fixed_vars[1]
-        title_2D = "#sigma_{Eff} / E vs. " + x_axis + " and " + lines + \
+        title_2D = "#sigma_{Eff} vs. " + x_axis + " and " + lines + \
                     graph_var + "=" + str(panel_var) + " and " + \
                     canvas_var + "=" + str(canvas_var_val) + fixed_vars[1]
 
@@ -244,13 +242,13 @@ def make_graphs(path, canvas_var_val, params, names, sigmas, out_file):
         #hist_list_2D[index].GetXaxis().SetRangeUser(0, int(ceil(max_2D[0]*1.1)))
         hist_list_2D[index].GetYaxis().SetTitle(lines)
         #hist_list_2D[index].GetYaxis().SetRangeUser(0, int(ceil(max_2D[1]*1.1)))
-        hist_list_2D[index].GetZaxis().SetTitle("#sigma_{Eff} / E")
+        hist_list_2D[index].GetZaxis().SetTitle("#sigma_{Eff}")
         canvas_2D.Update()
 
         canvas.cd(canvas_panel_num)
         graph_list[index].Draw("APL")
         graph_list[index].GetXaxis().SetTitle(x_axis)
-        graph_list[index].GetYaxis().SetTitle("#sigma_{Eff} / E")
+        graph_list[index].GetYaxis().SetTitle("#sigma_{Eff}")
         leg_list[index].Draw()
 
         canvas_panel_num += 1
@@ -360,7 +358,7 @@ def make_main_graphs(path, canvas_var_val, params, names, sigmas, out_file):
             line_num += 1
 
         # Initialize the graph and legend
-        title  = "#sigma_{Eff} / E vs. " + x_axis + " where " + \
+        title  = "#sigma_{Eff} vs. " + x_axis + " where " + \
                  graph_var + "=" + str(panel_var) + " and " + \
                  canvas_var + "=" + str(canvas_var_val) + fixed_vars[1]
 
@@ -386,7 +384,7 @@ def make_main_graphs(path, canvas_var_val, params, names, sigmas, out_file):
         canvas.cd(canvas_panel_num)
         graph_list[index].Draw("APL")
         graph_list[index].GetXaxis().SetTitle(x_axis)
-        graph_list[index].GetYaxis().SetTitle("#sigma_{Eff} / E")
+        graph_list[index].GetYaxis().SetTitle("#sigma_{Eff}")
         leg_list[index].Draw()
 
         canvas_panel_num += 1
@@ -402,7 +400,8 @@ def make_point(names, fixed_vars, var_list):
     for name in names:
         if len(fixed_vars) > 0:
             for i in range(0, len(fixed_vars), 2):
-                whole_list = var_list + [fixed_vars[i], fixed_vars[i+1]]
+                whole_list = var_list[:]
+                whole_list.append([fixed_vars[i], fixed_vars[i+1]])
                 for var in whole_list:
                     if var[0] == name: point += (float(var[1]),)
         else:

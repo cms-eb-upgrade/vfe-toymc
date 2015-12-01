@@ -1,7 +1,3 @@
-import os
-import argparse
-from sys import argv
-
 """ Creates the data for multifit over a range of values quickly by submitting
     all jobs to lxbatch. Lists of the desired parameters can be passed in at
     the command line using flags: 
@@ -31,6 +27,11 @@ from sys import argv
 
     Source: https://github.com/cms-eb-upgrade/vfe-toymc/
 """
+
+import os
+import argparse
+from sys import argv
+
 def main(NEVENTS = 100, NFREQS = [25.00], NSAMPLES = [10], NPUS = [0.00], 
          AMPLITUDES = [5.00], PUFACTORS = [1.00], NOISE = [0.044], 
          create_data = True, fit_data = False):
@@ -70,7 +71,8 @@ def main(NEVENTS = 100, NFREQS = [25.00], NSAMPLES = [10], NPUS = [0.00],
                                 script.write(
                                 "./CreateData.exe 0 " + 
                                 str(NEVENTS) + " " + str(nsample) + " " + 
-                                str(nfreq) + " " + str(npu) + " " + str(amplitude) + " " +
+                                str(nfreq) + " " + str(npu) + " " + 
+                                str(amplitude) + " " +
                                 str(noise) + " " +str(puFactor))
                             if fit_data:
                                 print nfreq, nsample, npu, amplitude, NEVENTS

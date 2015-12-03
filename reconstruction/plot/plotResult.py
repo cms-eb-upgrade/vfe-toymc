@@ -41,10 +41,7 @@ def main():
             #print line
             # Round and add the values to the two placeholder tuples
             if (i < len(line) - 2):
-                if param_names[i] == "Amplitude":
-                    key += (round(float(stat)),)
-                else: 
-                    key += (round(float(stat), 3),)
+                key += (round(float(stat), 3),)
                 if key[i] not in param_list[i]:
                     param_list[i].append(key[i])
                 #print stat, i
@@ -385,7 +382,7 @@ def make_main_graphs(path, canvas_var_val, params, names, sigmas, out_file):
         graph_list[index].Draw("APL")
         graph_list[index].GetXaxis().SetTitle(x_axis)
         graph_list[index].GetYaxis().SetTitle("#sigma_{Eff}")
-        leg_list[index].Draw()
+        #leg_list[index].Draw()
 
         canvas_panel_num += 1
 

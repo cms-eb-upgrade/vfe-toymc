@@ -40,15 +40,14 @@ def main(files):
         tree = in_file.Get("RecoAndSim")
         entries = tree.GetEntries()
 
-        # Getting and checking the stats for the file
+        # Getting the stats for the file
         tree.GetEntry(0)
-        stats = [tree.nSmpl, tree.nFreq, tree.amplitudeTruth , 
+        stats = [tree.nSmpl, tree.nFreq, tree.signalTruth , 
                  tree.nPU, tree.sigmaNoise]
 
         # Making the energy distribution histogram
         dev_hist_name = "Hist"
         dev_hist = TH1F("", "", BINS, start_bin, end_bin)
-
         for event in range(0, entries):
             tree.GetEntry(event)
             event_amplitude = tree.amplitudeTruth
@@ -121,7 +120,6 @@ def sigma_eff(arr, bin_size, entries):
     sigma_err = sigma / sqrt(2.0*(entries - 1.0))
 
     return (sigma, sigma_err)
-    #return [(sigma, sigma_err), real_start, real_end, window_size, entries]
 
 if __name__ == "__main__":
     

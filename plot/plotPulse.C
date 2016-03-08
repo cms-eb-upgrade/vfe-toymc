@@ -100,8 +100,10 @@ void plotPulse (std::string nameInputFile = "output.root", int nEvent = 10){
  
 //  for(int iBx=0; iBx<3; iBx++){
  for(int iBx=0; iBx<samplesReco->size(); iBx++){
+  std::cout << " iBx = " << iBx << std::endl;
   grPulseReco[iBx] = new TGraph();
   for(int i=0; i<samples->size(); i++){
+   std::cout << "  >> i = " << i << std::endl;
    grPulseReco[iBx]->SetPoint(i, i * NFREQ + activeBXs->at(iBx)*NFREQ + 2 * 25, pulseShapeTemplate->at(i) * samplesReco->at(iBx));
   
    int iReco = (i * NFREQ + activeBXs->at(iBx)*NFREQ + 2 * 25) / NFREQ;

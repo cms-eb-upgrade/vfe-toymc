@@ -113,3 +113,18 @@ as well.  Timing is ToF adjusted and modulo 25ns. Hence spikes from
 earlier BX are accounted for.  Based on CMSSW simulations for Phase2
 ECAL. Represents an average EB channel (no eta dependence of APD spike
 energy/time)
+
+
+PhotoCurrent.C
+---------------
+
+Generate waveform of photo-current in APD in a presense of pileup
+One histogram per event.
+Horizontal axis is in ns.
+Vertical axis is in microAmps.
+Assumes EB light output of 4.5 pe/MeV and APD gain 50
+
+suggestions to run:
+ - change inputs (see more details in PhotoCurrent.C)
+ - run command:
+ > root -l -q PhotoCurrent.C+

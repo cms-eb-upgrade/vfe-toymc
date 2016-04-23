@@ -44,6 +44,7 @@ class Pulse{
  public:
 
   Pulse();
+  Pulse(TString fn);
   ~Pulse();
   TGraph* grPS() {return grPS_; };
   float tMin() const { return tMin_; };
@@ -79,6 +80,27 @@ Pulse::Pulse()
 }
 
 
+Pulse::Pulse(TString fn)
+{
+  filePS_ = new TFile(fn.Data());
+  grPS_ = (TGraph*)filePS_->Get("PulseShape/grPulseShape");
+  TTree *trPS = (TTree*)filePS_->Get("PulseShape/Tail");
+  trPS->SetBranchAddress("timeMin",      &tMin_);
+  trPS->SetBranchAddress("expAmplitude", &fPar0_);
+  trPS->SetBranchAddress("expTime",      &fPar1_);
+  trPS->GetEntry(0);
+
+  // In-time sample is i=5
+  
+  for(int i=0; i<NSAMPLES; i++){
+    double x = double( IDSTART + NFREQ * i - WFLENGTH / 2);
+    weights_[i] = fShape(x);
+  }
+
+  NoiseInit();
+}
+
+
 Pulse::~Pulse()
 {
 }
@@ -87,8 +109,10 @@ Pulse::~Pulse()
 double Pulse::fShape(double x)
 {
   if( grPS_ !=0 && x > 0.){
-    if(x<800.){
-      return grPS_->Eval(x);
+    if(x<tMin_){
+      double y = grPS_->Eval(x);
+      if(y<=0) y=0;
+      return y;
     }else{
       return fPar0_ * exp( -x * fPar1_ );
     }

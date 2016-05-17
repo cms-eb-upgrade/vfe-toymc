@@ -72,7 +72,7 @@ void PhotoCurrent()
 
   TFile *fileOut = new TFile(fileOutput.Data(),"recreate");
 
-  const int nBinsWF = int( fabs(timeMax - timeMin) / 0.1 );
+  const int nBinsWF = int( fabs(timeMax - timeMin) / timeStep );
   TH1D *hWaveform[nEventsTotal];
 
 

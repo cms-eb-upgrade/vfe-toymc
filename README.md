@@ -128,3 +128,20 @@ suggestions to run:
  - change inputs (see more details in PhotoCurrent.C)
  - run command:
  > root -l -q PhotoCurrent.C+
+ 
+ 
+DataFrame
+------------
+
+This subdirectory contains examples related to digitization of signal with TIA (or CATIA).
+
+Pileup and noise is also simulated.  
+Noise includes correlations.  
+Number of samples and sampling frequency (sampling step) should be specified.
+
+Instructions to run:  
+`> cd DataFrame`  
+`> root -l`  
+`[] .L ExamplesDataFrame.C+`  
+`[] PlotSignalDigisIdeal()`  
+`[] PrintSignalDigisReal()`  

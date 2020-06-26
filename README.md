@@ -145,3 +145,21 @@ Instructions to run:
 `[] .L ExamplesDataFrame.C+`  
 `[] PlotSignalDigisIdeal()`  
 `[] PrintSignalDigisReal()`  
+
+ 
+Signal_and_Spikes
+------------
+
+This subdirectory contains files with various spike PDFs as descibed in CMS DN-17/028
+Two examples provided:
+
+First, plots analog waveform and digital samples for prompt spike and signal. One can choose phase 1 or phase 2 configuration  
+
+`> cd Signal_and_Spikes`  
+`> root -l`  
+`[] .L Signal_and_Spikes.C+`  
+`[] ExampleA(1) or ExampleA(2)`  
+
+Second, prints few digis for spikes above 1 GeV. One can choose ieta of a channel and phase 1/2 configuration.  
+For example,  
+`[] ExampleB(85,1)`  
